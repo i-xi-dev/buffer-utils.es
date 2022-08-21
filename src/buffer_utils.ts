@@ -34,13 +34,17 @@ namespace BufferUtils {
     return value === DataView;
   }
 
-  export type ArrayBufferViewConstructor =
-    | TypedArrayConstructor
-    | DataViewConstructor;
+  // export type ArrayBufferViewConstructor =
+  //   | TypedArrayConstructor
+  //   | DataViewConstructor;
+
+  export type ArrayBufferViewConstructor<T extends ArrayBufferView> = {
+    new (a: ArrayBuffer, b?: number, c?: number): T;
+  };
 
   export function isArrayBufferViewConstructor(
     value: unknown,
-  ): value is ArrayBufferViewConstructor {
+  ): value is TypedArrayConstructor | DataViewConstructor {
     return isTypedArrayConstructor(value) ? true : isDataViewConstructor(value);
   }
 
