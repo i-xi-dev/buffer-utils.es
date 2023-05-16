@@ -1,7 +1,7 @@
 import {
   Uint8,
   type uint8,
-} from "i-xi-dev/int.es";
+} from "../deps.ts";
 
 namespace BufferUtils {
   /**
