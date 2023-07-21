@@ -1,7 +1,4 @@
-import {
-  Uint8,
-  type uint8,
-} from "../deps.ts";
+import { Uint8, type uint8 } from "../deps.ts";
 
 namespace BufferUtils {
   /**
