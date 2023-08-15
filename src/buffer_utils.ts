@@ -1,4 +1,4 @@
-import { Uint8, type uint8 } from "../deps.ts";
+import { Uint8 } from "../deps.ts";
 
 namespace BufferUtils {
   /**
@@ -63,7 +63,7 @@ namespace BufferUtils {
     return isTypedArrayConstructor(value) ? true : isDataViewConstructor(value);
   }
 
-  export function isArrayOfUint8(value: unknown): value is Array<uint8> {
+  export function isArrayOfUint8(value: unknown): value is Array<Uint8> {
     return Array.isArray(value) && value.every((i) => Uint8.isUint8(i));
   }
 }
