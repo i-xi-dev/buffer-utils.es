@@ -16,7 +16,10 @@ Deno.test("new GrowableBuffer()/capacity/position/put()", () => {
   assertStrictEquals(b.position, 24);
 
   const b2 = b.slice();
-  assertStrictEquals(JSON.stringify(Array.from(b2)), "[1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12]");
+  assertStrictEquals(
+    JSON.stringify(Array.from(b2)),
+    "[1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12]",
+  );
 });
 
 Deno.test("new GrowableBuffer()/capacity/position/put() - 2", () => {
@@ -35,9 +38,15 @@ Deno.test("new GrowableBuffer()/capacity/position/put() - 2", () => {
 
   const b2 = b.slice();
   if (isBigEndian()) {
-    assertStrictEquals(JSON.stringify(Array.from(b2)), "[0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12]");
-  }else{
-    assertStrictEquals(JSON.stringify(Array.from(b2)), "[1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0]");
+    assertStrictEquals(
+      JSON.stringify(Array.from(b2)),
+      "[0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12]",
+    );
+  } else {
+    assertStrictEquals(
+      JSON.stringify(Array.from(b2)),
+      "[1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0]",
+    );
   }
 });
 
