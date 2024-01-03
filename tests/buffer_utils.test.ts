@@ -1,118 +1,129 @@
-import { assertStrictEquals } from "./deps.ts";
-import { BufferUtils } from "../mod.ts";
+import { assertStrictEquals, assertThrows } from "./deps.ts";
+import { Uint8 } from "../deps.ts";
+import {
+  arrayToUint8Array,
+  isArrayBufferViewConstructor,
+  isArrayOfUint8,
+  isDataViewConstructor,
+  isTypedArrayConstructor,
+} from "../mod.ts";
 
-Deno.test("BufferUtils.isTypedArrayConstructor(*)", () => {
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(Uint8Array), true);
-  assertStrictEquals(
-    BufferUtils.isTypedArrayConstructor(Uint8ClampedArray),
-    true,
-  );
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(Int8Array), true);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(Uint16Array), true);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(Int16Array), true);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(Uint32Array), true);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(Int32Array), true);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(Float32Array), true);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(Float64Array), true);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(BigUint64Array), true);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(BigInt64Array), true);
+Deno.test("isTypedArrayConstructor(*)", () => {
+  assertStrictEquals(isTypedArrayConstructor(Uint8Array), true);
+  assertStrictEquals(isTypedArrayConstructor(Uint8ClampedArray), true);
+  assertStrictEquals(isTypedArrayConstructor(Int8Array), true);
+  assertStrictEquals(isTypedArrayConstructor(Uint16Array), true);
+  assertStrictEquals(isTypedArrayConstructor(Int16Array), true);
+  assertStrictEquals(isTypedArrayConstructor(Uint32Array), true);
+  assertStrictEquals(isTypedArrayConstructor(Int32Array), true);
+  assertStrictEquals(isTypedArrayConstructor(Float32Array), true);
+  assertStrictEquals(isTypedArrayConstructor(Float64Array), true);
+  assertStrictEquals(isTypedArrayConstructor(BigUint64Array), true);
+  assertStrictEquals(isTypedArrayConstructor(BigInt64Array), true);
 
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(DataView), false);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(Array), false);
-  assertStrictEquals(BufferUtils.isTypedArrayConstructor(null), false);
+  assertStrictEquals(isTypedArrayConstructor(DataView), false);
+  assertStrictEquals(isTypedArrayConstructor(Array), false);
+  assertStrictEquals(isTypedArrayConstructor(null), false);
   assertStrictEquals(
-    BufferUtils.isTypedArrayConstructor(new Uint8Array(0)),
+    isTypedArrayConstructor(new Uint8Array(0)),
     false,
   );
 });
 
-Deno.test("BufferUtils.isDataViewConstructor(*)", () => {
-  assertStrictEquals(BufferUtils.isDataViewConstructor(Uint8Array), false);
-  assertStrictEquals(
-    BufferUtils.isDataViewConstructor(Uint8ClampedArray),
-    false,
-  );
-  assertStrictEquals(BufferUtils.isDataViewConstructor(Int8Array), false);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(Uint16Array), false);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(Int16Array), false);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(Uint32Array), false);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(Int32Array), false);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(Float32Array), false);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(Float64Array), false);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(BigUint64Array), false);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(BigInt64Array), false);
+Deno.test("isDataViewConstructor(*)", () => {
+  assertStrictEquals(isDataViewConstructor(Uint8Array), false);
+  assertStrictEquals(isDataViewConstructor(Uint8ClampedArray), false);
+  assertStrictEquals(isDataViewConstructor(Int8Array), false);
+  assertStrictEquals(isDataViewConstructor(Uint16Array), false);
+  assertStrictEquals(isDataViewConstructor(Int16Array), false);
+  assertStrictEquals(isDataViewConstructor(Uint32Array), false);
+  assertStrictEquals(isDataViewConstructor(Int32Array), false);
+  assertStrictEquals(isDataViewConstructor(Float32Array), false);
+  assertStrictEquals(isDataViewConstructor(Float64Array), false);
+  assertStrictEquals(isDataViewConstructor(BigUint64Array), false);
+  assertStrictEquals(isDataViewConstructor(BigInt64Array), false);
 
-  assertStrictEquals(BufferUtils.isDataViewConstructor(DataView), true);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(Array), false);
-  assertStrictEquals(BufferUtils.isDataViewConstructor(null), false);
-  assertStrictEquals(
-    BufferUtils.isDataViewConstructor(new Uint8Array(0)),
-    false,
-  );
+  assertStrictEquals(isDataViewConstructor(DataView), true);
+  assertStrictEquals(isDataViewConstructor(Array), false);
+  assertStrictEquals(isDataViewConstructor(null), false);
+  assertStrictEquals(isDataViewConstructor(new Uint8Array(0)), false);
 });
 
-Deno.test("BufferUtils.isArrayBufferViewConstructor(*)", () => {
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(Uint8Array),
-    true,
-  );
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(Uint8ClampedArray),
-    true,
-  );
-  assertStrictEquals(BufferUtils.isArrayBufferViewConstructor(Int8Array), true);
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(Uint16Array),
-    true,
-  );
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(Int16Array),
-    true,
-  );
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(Uint32Array),
-    true,
-  );
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(Int32Array),
-    true,
-  );
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(Float32Array),
-    true,
-  );
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(Float64Array),
-    true,
-  );
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(BigUint64Array),
-    true,
-  );
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(BigInt64Array),
-    true,
-  );
+Deno.test("isArrayBufferViewConstructor(*)", () => {
+  assertStrictEquals(isArrayBufferViewConstructor(Uint8Array), true);
+  assertStrictEquals(isArrayBufferViewConstructor(Uint8ClampedArray), true);
+  assertStrictEquals(isArrayBufferViewConstructor(Int8Array), true);
+  assertStrictEquals(isArrayBufferViewConstructor(Uint16Array), true);
+  assertStrictEquals(isArrayBufferViewConstructor(Int16Array), true);
+  assertStrictEquals(isArrayBufferViewConstructor(Uint32Array), true);
+  assertStrictEquals(isArrayBufferViewConstructor(Int32Array), true);
+  assertStrictEquals(isArrayBufferViewConstructor(Float32Array), true);
+  assertStrictEquals(isArrayBufferViewConstructor(Float64Array), true);
+  assertStrictEquals(isArrayBufferViewConstructor(BigUint64Array), true);
+  assertStrictEquals(isArrayBufferViewConstructor(BigInt64Array), true);
 
-  assertStrictEquals(BufferUtils.isArrayBufferViewConstructor(DataView), true);
-  assertStrictEquals(BufferUtils.isArrayBufferViewConstructor(Array), false);
-  assertStrictEquals(BufferUtils.isArrayBufferViewConstructor(null), false);
-  assertStrictEquals(
-    BufferUtils.isArrayBufferViewConstructor(new Uint8Array(0)),
-    false,
-  );
+  assertStrictEquals(isArrayBufferViewConstructor(DataView), true);
+  assertStrictEquals(isArrayBufferViewConstructor(Array), false);
+  assertStrictEquals(isArrayBufferViewConstructor(null), false);
+  assertStrictEquals(isArrayBufferViewConstructor(new Uint8Array(0)), false);
 });
 
-Deno.test("BufferUtils.isArrayOfUint8(*)", () => {
-  assertStrictEquals(BufferUtils.isArrayOfUint8([]), true);
-  assertStrictEquals(BufferUtils.isArrayOfUint8([0]), true);
-  assertStrictEquals(BufferUtils.isArrayOfUint8([255]), true);
-  assertStrictEquals(BufferUtils.isArrayOfUint8([-0]), true);
-  assertStrictEquals(BufferUtils.isArrayOfUint8([-1]), false);
-  assertStrictEquals(BufferUtils.isArrayOfUint8([256]), false);
-  assertStrictEquals(BufferUtils.isArrayOfUint8(0), false);
-  assertStrictEquals(BufferUtils.isArrayOfUint8(256), false);
-  assertStrictEquals(BufferUtils.isArrayOfUint8([0, 255]), true);
-  assertStrictEquals(BufferUtils.isArrayOfUint8([0, 255, -1]), false);
-  assertStrictEquals(BufferUtils.isArrayOfUint8(["0"]), false);
+Deno.test("isArrayOfUint8(*)", () => {
+  assertStrictEquals(isArrayOfUint8([]), true);
+  assertStrictEquals(isArrayOfUint8([0]), true);
+  assertStrictEquals(isArrayOfUint8([255]), true);
+  assertStrictEquals(isArrayOfUint8([-0]), true);
+  assertStrictEquals(isArrayOfUint8([-1]), false);
+  assertStrictEquals(isArrayOfUint8([256]), false);
+  assertStrictEquals(isArrayOfUint8(0), false);
+  assertStrictEquals(isArrayOfUint8(256), false);
+  assertStrictEquals(isArrayOfUint8([0, 255]), true);
+  assertStrictEquals(isArrayOfUint8([0, 255, -1]), false);
+  assertStrictEquals(isArrayOfUint8(["0"]), false);
+});
+
+Deno.test("arrayToUint8Array(*)", () => {
+  assertThrows(
+    () => {
+      arrayToUint8Array(0 as unknown as Array<Uint8>);
+    },
+    TypeError,
+    "source",
+  );
+  
+  assertThrows(
+    () => {
+      arrayToUint8Array([-1] as unknown as Array<Uint8>);
+    },
+    RangeError,
+    "source[*]",
+  );
+  assertThrows(
+    () => {
+      arrayToUint8Array(["0"] as unknown as Array<Uint8>);
+    },
+    RangeError,
+    "source[*]",
+  );
+  assertThrows(
+    () => {
+      arrayToUint8Array([256] as unknown as Array<Uint8>);
+    },
+    RangeError,
+    "source[*]",
+  );
+  assertThrows(
+    () => {
+      arrayToUint8Array([0,256] as unknown as Array<Uint8>);
+    },
+    RangeError,
+    "source[*]",
+  );
+
+  assertStrictEquals(arrayToUint8Array([]).length, 0);
+  const a1 = arrayToUint8Array([0,1,255]);
+  assertStrictEquals(a1.length, 3);
+  assertStrictEquals(a1[0], 0);
+  assertStrictEquals(a1[1], 1);
+  assertStrictEquals(a1[2], 255);
 });
