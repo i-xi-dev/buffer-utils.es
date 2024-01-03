@@ -23,14 +23,17 @@ export class GrowableBuffer {
   }
 
   // XXX 最後に連結すべき？
-  put(bytes: Uint8Array): void {
+  put(bytes: BufferSource): void {
     if ((this.#position + bytes.byteLength) > this.#buffer.byteLength) {
       const extent = Math.max(bytes.byteLength, DEFAULT_SIZE);
       const extendedBuffer = new Uint8Array(this.#position + (extent * 10)); // XXX どのくらいが適正？
       extendedBuffer.set(this.#buffer, 0);
       this.#buffer = extendedBuffer;
     }
-    this.#buffer.set(bytes, this.#position);
+    this.#buffer.set(
+      new Uint8Array(("buffer" in bytes) ? bytes.buffer : bytes),
+      this.#position,
+    );
     this.#position = this.#position + bytes.byteLength;
   }
 
