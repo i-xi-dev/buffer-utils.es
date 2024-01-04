@@ -37,6 +37,8 @@ export function uint8sToBytes(source: Iterable<Uint8>): Uint8Array {
   });
 }
 
+//XXX uint8sToBytesAsync
+
 export function uint16sToBytes(
   source: Iterable<Uint16>,
   byteOrder?: ByteOrder,
@@ -84,6 +86,10 @@ export function uint16sToBytes(
   return new Uint8Array(buffer);
 }
 
+//XXX uint16sToBytesAsync
+
+//XXX bytesToUint32s
+
 export function uint32sToBytes(
   source: Iterable<Uint32>,
   byteOrder?: ByteOrder,
@@ -130,3 +136,5 @@ export function uint32sToBytes(
   }
   return new Uint8Array(buffer);
 }
+
+//XXX uint32sToBytesAsync
