@@ -111,7 +111,12 @@ export namespace Uint8ArrayUtils {
     } else {
       // 実行環境のバイトオーダー
 
-      return [...(new Uint16Array(bytes.buffer))];
+      return [
+        ...(new Uint16Array(
+          bytes.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)
+            .buffer,
+        )),
+      ];
     }
   }
 
@@ -192,7 +197,12 @@ export namespace Uint8ArrayUtils {
     } else {
       // 実行環境のバイトオーダー
 
-      return [...(new Uint32Array(bytes.buffer))];
+      return [
+        ...(new Uint32Array(
+          bytes.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)
+            .buffer,
+        )),
+      ];
     }
   }
 }
