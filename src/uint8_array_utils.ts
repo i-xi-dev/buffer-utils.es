@@ -117,8 +117,9 @@ export namespace Uint8ArrayUtils {
 
       return [
         ...(new Uint16Array(
-          bytes.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)
-            .buffer,
+          bytes.buffer,
+          bytes.byteOffset,
+          bytes.byteLength / Uint16Array.BYTES_PER_ELEMENT,
         )),
       ];
     }
@@ -207,8 +208,9 @@ export namespace Uint8ArrayUtils {
 
       return [
         ...(new Uint32Array(
-          bytes.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)
-            .buffer,
+          bytes.buffer,
+          bytes.byteOffset,
+          bytes.byteLength / Uint32Array.BYTES_PER_ELEMENT,
         )),
       ];
     }
