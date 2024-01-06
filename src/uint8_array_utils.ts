@@ -100,7 +100,11 @@ export namespace Uint8ArrayUtils {
       (byteOrder !== BYTE_ORDER)
     ) {
       const result: Array<Uint16> = [];
-      const reader = new DataView(bytes.buffer);
+      const reader = new DataView(
+        bytes.buffer,
+        bytes.byteOffset,
+        bytes.byteOffset + bytes.byteLength,
+      );
       const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
 
       for (let i = 0; i < (bytes.byteLength / Uint16.BYTES); i++) {
@@ -186,7 +190,11 @@ export namespace Uint8ArrayUtils {
       (byteOrder !== BYTE_ORDER)
     ) {
       const result: Array<Uint32> = [];
-      const reader = new DataView(bytes.buffer);
+      const reader = new DataView(
+        bytes.buffer,
+        bytes.byteOffset,
+        bytes.byteOffset + bytes.byteLength,
+      );
       const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
 
       for (let i = 0; i < (bytes.byteLength / Uint32.BYTES); i++) {
