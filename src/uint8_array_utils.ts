@@ -103,8 +103,8 @@ export namespace Uint8ArrayUtils {
       const reader = new DataView(bytes.buffer);
       const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
 
-      for (let i = 0; i < bytes.byteLength; i = i + Uint16.BYTES) {
-        result.push(reader.getUint16(i, littleEndian));
+      for (let i = 0; i < (bytes.byteLength / Uint16.BYTES); i++) {
+        result.push(reader.getUint16(i * Uint16.BYTES, littleEndian));
       }
 
       return result;
@@ -184,8 +184,8 @@ export namespace Uint8ArrayUtils {
       const reader = new DataView(bytes.buffer);
       const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
 
-      for (let i = 0; i < bytes.byteLength; i = i + Uint32.BYTES) {
-        result.push(reader.getUint32(i, littleEndian));
+      for (let i = 0; i < (bytes.byteLength / Uint32.BYTES); i++) {
+        result.push(reader.getUint32(i * Uint32.BYTES, littleEndian));
       }
 
       return result;
