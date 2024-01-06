@@ -1,66 +1,66 @@
 import { assertStrictEquals } from "./deps.ts";
-import { TypedArrayConstructor } from "../mod.ts";
+import { isTypedArrayConstructor } from "../mod.ts";
 
-Deno.test("TypedArrayConstructor.isTypedArrayConstructor(*)", () => {
+Deno.test("isTypedArrayConstructor(*)", () => {
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Uint8Array),
+    isTypedArrayConstructor(Uint8Array),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Uint8ClampedArray),
+    isTypedArrayConstructor(Uint8ClampedArray),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Int8Array),
+    isTypedArrayConstructor(Int8Array),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Uint16Array),
+    isTypedArrayConstructor(Uint16Array),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Int16Array),
+    isTypedArrayConstructor(Int16Array),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Uint32Array),
+    isTypedArrayConstructor(Uint32Array),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Int32Array),
+    isTypedArrayConstructor(Int32Array),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Float32Array),
+    isTypedArrayConstructor(Float32Array),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Float64Array),
+    isTypedArrayConstructor(Float64Array),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(BigUint64Array),
+    isTypedArrayConstructor(BigUint64Array),
     true,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(BigInt64Array),
+    isTypedArrayConstructor(BigInt64Array),
     true,
   );
 
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(DataView),
+    isTypedArrayConstructor(DataView),
     false,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(Array),
+    isTypedArrayConstructor(Array),
     false,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(null),
+    isTypedArrayConstructor(null),
     false,
   );
   assertStrictEquals(
-    TypedArrayConstructor.isTypedArrayConstructor(new Uint8Array(0)),
+    isTypedArrayConstructor(new Uint8Array(0)),
     false,
   );
 });
