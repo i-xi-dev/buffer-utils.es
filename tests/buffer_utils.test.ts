@@ -1,5 +1,7 @@
 import { assertStrictEquals } from "./deps.ts";
-import { isArrayOfUint8, isBigEndian, isLittleEndian } from "../mod.ts";
+import { BufferUtils } from "../mod.ts";
+
+const { isArrayOfUint8, isBigEndian, isLittleEndian } = BufferUtils;
 
 Deno.test("isBigEndian, isLittleEndian", () => {
   console.log(isBigEndian());

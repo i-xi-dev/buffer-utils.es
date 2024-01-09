@@ -1,5 +1,5 @@
 import { assertNotStrictEquals, assertStrictEquals } from "./deps.ts";
-import { GrowableBuffer, isBigEndian } from "../mod.ts";
+import { GrowableBuffer, BufferUtils } from "../mod.ts";
 
 Deno.test("new GrowableBuffer()/capacity/position/put()", () => {
   const b = new GrowableBuffer();
@@ -37,7 +37,7 @@ Deno.test("new GrowableBuffer()/capacity/position/put() - 2", () => {
   assertStrictEquals(b.position, 48);
 
   const b2 = b.slice();
-  if (isBigEndian()) {
+  if (BufferUtils.isBigEndian()) {
     assertStrictEquals(
       JSON.stringify(Array.from(b2)),
       "[0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12]",

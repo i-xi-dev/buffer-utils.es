@@ -1,6 +1,6 @@
 import { assertStrictEquals, assertThrows } from "../deps.ts";
 import { Uint32 } from "../../deps.ts";
-import { ByteOrder, isBigEndian, Uint8ArrayUtils } from "../../mod.ts";
+import { ByteOrder, BufferUtils, Uint8ArrayUtils } from "../../mod.ts";
 
 Deno.test("Uint8ArrayUtils.fromUint32s(Array<Uint32>)", () => {
   assertThrows(
@@ -84,7 +84,7 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Array<Uint32>)", () => {
 
   const a1x = Uint8ArrayUtils.fromUint32s([0, 1, 0xFFFFFFFF]);
   assertStrictEquals(a1x.length, 12);
-  if (isBigEndian()) {
+  if (BufferUtils.isBigEndian()) {
     assertStrictEquals(a1be[0], 0);
     assertStrictEquals(a1be[1], 0);
     assertStrictEquals(a1be[2], 0);
@@ -159,7 +159,7 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Uint32Array)", () => {
     Uint32Array.of(0, 1, 0xFFFFFFFF),
   );
   assertStrictEquals(a1x.length, 12);
-  if (isBigEndian()) {
+  if (BufferUtils.isBigEndian()) {
     assertStrictEquals(a1be[0], 0);
     assertStrictEquals(a1be[1], 0);
     assertStrictEquals(a1be[2], 0);
@@ -243,7 +243,7 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Generator<Uint32>)", () => {
 
   const a1x = Uint8ArrayUtils.fromUint32s(g3);
   assertStrictEquals(a1x.length, 12);
-  if (isBigEndian()) {
+  if (BufferUtils.isBigEndian()) {
     assertStrictEquals(a1be[0], 0);
     assertStrictEquals(a1be[1], 0);
     assertStrictEquals(a1be[2], 0);
