@@ -11,6 +11,13 @@ Deno.test("BufferUtils.toUint16Iterable(Uint8Array)", () => {
   );
   assertThrows(
     () => {
+      BufferUtils.toUint16Iterable(1 as unknown as ArrayBuffer);
+    },
+    TypeError,
+    "bytes",
+  );
+  assertThrows(
+    () => {
       BufferUtils.toUint16Iterable(Uint8Array.of(1).buffer);
     },
     RangeError,

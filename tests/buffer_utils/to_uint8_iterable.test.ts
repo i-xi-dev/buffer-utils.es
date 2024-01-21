@@ -10,6 +10,14 @@ Deno.test("BufferUtils.toUint8Iterable(Uint8Array)", () => {
     "bytes",
   );
 
+  assertThrows(
+    () => {
+      BufferUtils.toUint8Iterable(1 as unknown as ArrayBuffer);
+    },
+    TypeError,
+    "bytes",
+  );
+
   assertStrictEquals(
     JSON.stringify([...BufferUtils.toUint8Iterable(Uint8Array.of().buffer)]),
     "[]",

@@ -46,7 +46,7 @@ export function fromUint8Iterable(
   if (!source) {
     throw new TypeError("source");
   }
-  if ((Symbol.iterator in source) !== true) {
+  if (((typeof source === "object") && (Symbol.iterator in source)) !== true) {
     throw new TypeError("source");
   }
 
@@ -64,7 +64,9 @@ export async function fromAsyncUint8Iterable(
   if (!source) {
     throw new TypeError("source");
   }
-  if ((Symbol.asyncIterator in source) !== true) {
+  if (
+    ((typeof source === "object") && (Symbol.asyncIterator in source)) !== true
+  ) {
     throw new TypeError("source");
   }
 
@@ -96,7 +98,7 @@ export function fromUint16Iterable(
   if (!source) {
     throw new TypeError("source");
   }
-  if ((Symbol.iterator in source) !== true) {
+  if (((typeof source === "object") && (Symbol.iterator in source)) !== true) {
     throw new TypeError("source");
   }
   const sourceLength =
@@ -141,7 +143,9 @@ export async function fromAsyncUint16Iterable(
   if (!source) {
     throw new TypeError("source");
   }
-  if ((Symbol.asyncIterator in source) !== true) {
+  if (
+    ((typeof source === "object") && (Symbol.asyncIterator in source)) !== true
+  ) {
     throw new TypeError("source");
   }
 
@@ -220,7 +224,7 @@ export function fromUint32Iterable(
   if (!source) {
     throw new TypeError("source");
   }
-  if ((Symbol.iterator in source) !== true) {
+  if (((typeof source === "object") && (Symbol.iterator in source)) !== true) {
     throw new TypeError("source");
   }
   const sourceLength =
@@ -265,7 +269,9 @@ export async function fromAsyncUint32Iterable(
   if (!source) {
     throw new TypeError("source");
   }
-  if ((Symbol.asyncIterator in source) !== true) {
+  if (
+    ((typeof source === "object") && (Symbol.asyncIterator in source)) !== true
+  ) {
     throw new TypeError("source");
   }
 

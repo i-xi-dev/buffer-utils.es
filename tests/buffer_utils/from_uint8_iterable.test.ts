@@ -13,6 +13,14 @@ Deno.test("BufferUtils.fromUint8Iterable(Array<Uint8>)", () => {
 
   assertThrows(
     () => {
+      BufferUtils.fromUint8Iterable(1 as unknown as Array<Uint8>);
+    },
+    TypeError,
+    "source",
+  );
+
+  assertThrows(
+    () => {
       BufferUtils.fromUint8Iterable([-1] as unknown as Array<Uint8>);
     },
     RangeError,

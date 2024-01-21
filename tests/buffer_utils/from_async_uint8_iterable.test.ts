@@ -16,6 +16,16 @@ Deno.test("BufferUtils.fromAsyncUint8Iterable(Array<Uint8>)", () => {
   assertRejects(
     async () => {
       await BufferUtils.fromAsyncUint8Iterable(
+        1 as unknown as AsyncIterable<Uint8>,
+      );
+    },
+    TypeError,
+    "source",
+  );
+
+  assertRejects(
+    async () => {
+      await BufferUtils.fromAsyncUint8Iterable(
         [-1] as unknown as AsyncIterable<Uint8>,
       );
     },
