@@ -2,10 +2,10 @@ import { assertRejects, assertStrictEquals } from "../deps.ts";
 import { Uint8 } from "../../deps.ts";
 import { BufferUtils } from "../../mod.ts";
 
-Deno.test("BufferUtils.fromUint8AsyncIterable(Array<Uint8>)", () => {
+Deno.test("BufferUtils.fromAsyncUint8Iterable(Array<Uint8>)", () => {
   assertRejects(
     async () => {
-      await BufferUtils.fromUint8AsyncIterable(
+      await BufferUtils.fromAsyncUint8Iterable(
         0 as unknown as AsyncIterable<Uint8>,
       );
     },
@@ -15,7 +15,7 @@ Deno.test("BufferUtils.fromUint8AsyncIterable(Array<Uint8>)", () => {
 
   assertRejects(
     async () => {
-      await BufferUtils.fromUint8AsyncIterable(
+      await BufferUtils.fromAsyncUint8Iterable(
         [-1] as unknown as AsyncIterable<Uint8>,
       );
     },
@@ -24,7 +24,7 @@ Deno.test("BufferUtils.fromUint8AsyncIterable(Array<Uint8>)", () => {
   );
   assertRejects(
     async () => {
-      await BufferUtils.fromUint8AsyncIterable(
+      await BufferUtils.fromAsyncUint8Iterable(
         ["0"] as unknown as AsyncIterable<Uint8>,
       );
     },
@@ -33,7 +33,7 @@ Deno.test("BufferUtils.fromUint8AsyncIterable(Array<Uint8>)", () => {
   );
   assertRejects(
     async () => {
-      await BufferUtils.fromUint8AsyncIterable(
+      await BufferUtils.fromAsyncUint8Iterable(
         [256] as unknown as AsyncIterable<Uint8>,
       );
     },
@@ -42,7 +42,7 @@ Deno.test("BufferUtils.fromUint8AsyncIterable(Array<Uint8>)", () => {
   );
   assertRejects(
     async () => {
-      await BufferUtils.fromUint8AsyncIterable(
+      await BufferUtils.fromAsyncUint8Iterable(
         [0, 256] as unknown as AsyncIterable<Uint8>,
       );
     },
@@ -51,11 +51,11 @@ Deno.test("BufferUtils.fromUint8AsyncIterable(Array<Uint8>)", () => {
   );
 });
 
-Deno.test("BufferUtils.fromUint8AsyncIterable(AsyncGenerator<Uint8>)", async () => {
+Deno.test("BufferUtils.fromAsyncUint8Iterable(AsyncGenerator<Uint8>)", async () => {
   const g0 = (async function* () {
   })();
   assertStrictEquals(
-    (await BufferUtils.fromUint8AsyncIterable(g0)).byteLength,
+    (await BufferUtils.fromAsyncUint8Iterable(g0)).byteLength,
     0,
   );
 
@@ -65,14 +65,14 @@ Deno.test("BufferUtils.fromUint8AsyncIterable(AsyncGenerator<Uint8>)", async () 
     yield 255;
   })();
 
-  const a1 = new Uint8Array(await BufferUtils.fromUint8AsyncIterable(g1));
+  const a1 = new Uint8Array(await BufferUtils.fromAsyncUint8Iterable(g1));
   assertStrictEquals(a1.length, 3);
   assertStrictEquals(a1[0], 0);
   assertStrictEquals(a1[1], 1);
   assertStrictEquals(a1[2], 255);
 });
 
-Deno.test("BufferUtils.fromUint8AsyncIterable(AsyncGenerator<any>)", () => {
+Deno.test("BufferUtils.fromAsyncUint8Iterable(AsyncGenerator<any>)", () => {
   const g1 = (async function* () {
     yield 0;
     yield 1;
@@ -81,7 +81,7 @@ Deno.test("BufferUtils.fromUint8AsyncIterable(AsyncGenerator<any>)", () => {
 
   assertRejects(
     async () => {
-      await BufferUtils.fromUint8AsyncIterable(
+      await BufferUtils.fromAsyncUint8Iterable(
         g1 as unknown as AsyncGenerator<Uint8>,
       );
     },
@@ -97,7 +97,7 @@ Deno.test("BufferUtils.fromUint8AsyncIterable(AsyncGenerator<any>)", () => {
 
   assertRejects(
     async () => {
-      await BufferUtils.fromUint8AsyncIterable(g2);
+      await BufferUtils.fromAsyncUint8Iterable(g2);
     },
     RangeError,
     "source[*]",

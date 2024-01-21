@@ -16,6 +16,17 @@ export function isLittleEndian(): boolean {
   return (BYTE_ORDER === ByteOrder.LITTLE_ENDIAN);
 }
 
+//XXX
+/*
+fromInt8Iterable
+fromInt16Iterable
+fromInt32Iterable
+fromBigInt64Iterable
+fromBigUint64Iterable
+fromFloat32Iterable
+fromFloat64Iterable
+*/
+
 export function fromUint8Iterable(
   source: Iterable<number /* Uint8 */>,
 ): ArrayBuffer {
@@ -34,7 +45,7 @@ export function fromUint8Iterable(
   }).buffer;
 }
 
-export async function fromUint8AsyncIterable(
+export async function fromAsyncUint8Iterable(
   source: AsyncIterable<number /* Uint8 */>,
 ): Promise<ArrayBuffer> {
   if (!source) {
@@ -44,6 +55,7 @@ export async function fromUint8AsyncIterable(
     throw new TypeError("source");
   }
 
+  //TODO Array.fromAsyncが広く実装されたらそちらに変更する
   const gb = new GrowableBuffer();
   for await (const i of source) {
     if (Uint8.isUint8(i) !== true) {
@@ -99,6 +111,53 @@ export function fromUint16Iterable(
   }
 }
 
+export async function fromAsyncUint16Iterable(
+  source: AsyncIterable<Uint16>,
+  byteOrder?: ByteOrder,
+): Promise<ArrayBuffer> {
+  if (!source) {
+    throw new TypeError("source");
+  }
+  if ((Symbol.asyncIterator in source) !== true) {
+    throw new TypeError("source");
+  }
+
+  if (
+    Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
+    (byteOrder !== BYTE_ORDER)
+  ) {
+    const gb = new GrowableBuffer();
+    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
+    const tmp = new ArrayBuffer(Uint16Array.BYTES_PER_ELEMENT);
+    const tmpView = new DataView(tmp);
+
+    for await (const i of source) {
+      if (Uint16.isUint16(i) !== true) {
+        throw new RangeError("source[*]");
+      }
+      tmpView.setInt16(0, i, littleEndian);
+      gb.putRange(tmpView);
+    }
+
+    return gb.slice().buffer;
+  } else {
+    // 実行環境のバイトオーダー
+
+    //TODO Uint16Array.fromAsyncが広く実装されたらそちらに変更する
+    const gb = new GrowableBuffer();
+    const tmpView = new Uint16Array(1);
+
+    for await (const i of source) {
+      if (Uint16.isUint16(i) !== true) {
+        throw new RangeError("source[*]");
+      }
+      tmpView[0] = i;
+      gb.putRange(tmpView);
+    }
+    return gb.slice().buffer;
+  }
+}
+
 export function fromUint32Iterable(
   source: Iterable<Uint32>,
   byteOrder?: ByteOrder,
@@ -141,6 +200,53 @@ export function fromUint32Iterable(
       }
       return i;
     }).buffer;
+  }
+}
+
+export async function fromAsyncUint32Iterable(
+  source: AsyncIterable<Uint32>,
+  byteOrder?: ByteOrder,
+): Promise<ArrayBuffer> {
+  if (!source) {
+    throw new TypeError("source");
+  }
+  if ((Symbol.asyncIterator in source) !== true) {
+    throw new TypeError("source");
+  }
+
+  if (
+    Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
+    (byteOrder !== BYTE_ORDER)
+  ) {
+    const gb = new GrowableBuffer();
+    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
+    const tmp = new ArrayBuffer(Uint32Array.BYTES_PER_ELEMENT);
+    const tmpView = new DataView(tmp);
+
+    for await (const i of source) {
+      if (Uint32.isUint32(i) !== true) {
+        throw new RangeError("source[*]");
+      }
+      tmpView.setInt32(0, i, littleEndian);
+      gb.putRange(tmpView);
+    }
+
+    return gb.slice().buffer;
+  } else {
+    // 実行環境のバイトオーダー
+
+    //TODO Uint32Array.fromAsyncが広く実装されたらそちらに変更する
+    const gb = new GrowableBuffer();
+    const tmpView = new Uint32Array(1);
+
+    for await (const i of source) {
+      if (Uint32.isUint32(i) !== true) {
+        throw new RangeError("source[*]");
+      }
+      tmpView[0] = i;
+      gb.putRange(tmpView);
+    }
+    return gb.slice().buffer;
   }
 }
 

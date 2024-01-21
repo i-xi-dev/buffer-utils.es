@@ -3,7 +3,6 @@ import { BYTE_ORDER } from "./main.ts";
 import { Uint16, Uint32, Uint8 } from "../deps.ts";
 
 export namespace Uint8ArrayUtils {
-
   export function toUint8sArray(bytes: Uint8Array): Array<Uint8> {
     if ((bytes instanceof Uint8Array) !== true) {
       throw new TypeError("bytes");
@@ -13,8 +12,6 @@ export namespace Uint8ArrayUtils {
   }
 
   //XXX toUint8sIterator
-
-  //XXX fromUint16sAsync
 
   export function toUint16sArray(
     bytes: Uint8Array,
@@ -57,8 +54,6 @@ export namespace Uint8ArrayUtils {
       ];
     }
   }
-
-  //XXX fromUint32sAsync
 
   export function toUint32sArray(
     bytes: Uint8Array,
