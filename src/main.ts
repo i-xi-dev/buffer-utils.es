@@ -16,15 +16,28 @@ export function isLittleEndian(): boolean {
   return (BYTE_ORDER === ByteOrder.LITTLE_ENDIAN);
 }
 
-//XXX
-/*
+/*TODO
 fromInt8Iterable
+fromAsyncInt8Iterable
+toInt8Iterable
 fromInt16Iterable
+fromAsyncInt16Iterable
+toInt16Iterable
 fromInt32Iterable
+fromAsyncInt32Iterable
+toInt32Iterable
 fromBigInt64Iterable
+fromAsyncBigInt64Iterable
+toBigInt64Iterable
 fromBigUint64Iterable
+fromAsyncBigUint64Iterable
+toBigUint64Iterable
 fromFloat32Iterable
+fromAsyncFloat32Iterable
+toFloat32Iterable
 fromFloat64Iterable
+fromAsyncFloat64Iterable
+toFloat64Iterable
 */
 
 export function fromUint8Iterable(
@@ -64,6 +77,16 @@ export async function fromAsyncUint8Iterable(
     gb.put(i);
   }
   return gb.slice().buffer;
+}
+
+export function toUint8Iterable /* as Array */(
+  bytes: ArrayBuffer,
+): Iterable<Uint8> {
+  if ((bytes instanceof ArrayBuffer) !== true) {
+    throw new TypeError("bytes");
+  }
+
+  return [...new Uint8Array(bytes)] as Array<Uint8>;
 }
 
 export function fromUint16Iterable(
@@ -158,6 +181,38 @@ export async function fromAsyncUint16Iterable(
   }
 }
 
+export function toUint16Iterable(
+  bytes: ArrayBuffer,
+  byteOrder?: ByteOrder,
+): Array<Uint16> {
+  if ((bytes instanceof ArrayBuffer) !== true) {
+    throw new TypeError("bytes");
+  }
+  if ((bytes.byteLength % Uint16.BYTES) !== 0) {
+    throw new RangeError("bytes");
+    //XXX ゼロで埋める？
+  }
+
+  if (
+    Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
+    (byteOrder !== BYTE_ORDER)
+  ) {
+    const result: Array<Uint16> = [];
+    const reader = new DataView(bytes);
+    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
+
+    for (let i = 0; i < (bytes.byteLength / Uint16.BYTES); i++) {
+      result.push(reader.getUint16(i * Uint16.BYTES, littleEndian));
+    }
+
+    return result;
+  } else {
+    // 実行環境のバイトオーダー
+
+    return [...(new Uint16Array(bytes))];
+  }
+}
+
 export function fromUint32Iterable(
   source: Iterable<Uint32>,
   byteOrder?: ByteOrder,
@@ -247,6 +302,38 @@ export async function fromAsyncUint32Iterable(
       gb.putRange(tmpView);
     }
     return gb.slice().buffer;
+  }
+}
+
+export function toUint32Iterable(
+  bytes: ArrayBuffer,
+  byteOrder?: ByteOrder,
+): Array<Uint32> {
+  if ((bytes instanceof ArrayBuffer) !== true) {
+    throw new TypeError("bytes");
+  }
+  if ((bytes.byteLength % Uint32.BYTES) !== 0) {
+    throw new RangeError("bytes");
+    //XXX ゼロで埋める？
+  }
+
+  if (
+    Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
+    (byteOrder !== BYTE_ORDER)
+  ) {
+    const result: Array<Uint32> = [];
+    const reader = new DataView(bytes);
+    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
+
+    for (let i = 0; i < (bytes.byteLength / Uint32.BYTES); i++) {
+      result.push(reader.getUint32(i * Uint32.BYTES, littleEndian));
+    }
+
+    return result;
+  } else {
+    // 実行環境のバイトオーダー
+
+    return [...(new Uint32Array(bytes))];
   }
 }
 

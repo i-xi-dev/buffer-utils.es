@@ -1,22 +1,22 @@
 import { assertStrictEquals, assertThrows } from "../deps.ts";
-import { Uint8ArrayUtils } from "../../mod.ts";
+import { BufferUtils } from "../../mod.ts";
 
-Deno.test("Uint8ArrayUtils.toUint8sArray(Uint8Array)", () => {
+Deno.test("BufferUtils.toUint8Iterable(Uint8Array)", () => {
   assertThrows(
     () => {
-      Uint8ArrayUtils.toUint8sArray(0 as unknown as Uint8Array);
+      BufferUtils.toUint8Iterable(0 as unknown as ArrayBuffer);
     },
     TypeError,
     "bytes",
   );
 
   assertStrictEquals(
-    JSON.stringify([...Uint8ArrayUtils.toUint8sArray(Uint8Array.of())]),
+    JSON.stringify([...BufferUtils.toUint8Iterable(Uint8Array.of().buffer)]),
     "[]",
   );
   assertStrictEquals(
     JSON.stringify([
-      ...Uint8ArrayUtils.toUint8sArray(Uint8Array.of(1, 0, 3, 2)),
+      ...BufferUtils.toUint8Iterable(Uint8Array.of(1, 0, 3, 2).buffer),
     ]),
     "[1,0,3,2]",
   );
@@ -24,8 +24,8 @@ Deno.test("Uint8ArrayUtils.toUint8sArray(Uint8Array)", () => {
   const b2b = new Uint8Array(b2.buffer, 4, 4);
   assertStrictEquals(
     JSON.stringify([
-      ...Uint8ArrayUtils.toUint8sArray(b2b),
+      ...BufferUtils.toUint8Iterable(b2b.buffer),
     ]),
-    "[1,0,3,2]",
+    "[0,0,0,0,1,0,3,2,1,1,1,1]",
   );
 });

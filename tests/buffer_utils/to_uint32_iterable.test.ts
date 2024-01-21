@@ -1,31 +1,31 @@
 import { assertStrictEquals, assertThrows } from "../deps.ts";
-import { BufferUtils, ByteOrder, Uint8ArrayUtils } from "../../mod.ts";
+import { BufferUtils, ByteOrder } from "../../mod.ts";
 
-Deno.test("Uint8ArrayUtils.toUint32sArray(Uint8Array)", () => {
+Deno.test("BufferUtils.toUint32Iterable(Uint8Array)", () => {
   assertThrows(
     () => {
-      Uint8ArrayUtils.toUint32sArray(0 as unknown as Uint8Array);
+      BufferUtils.toUint32Iterable(0 as unknown as ArrayBuffer);
     },
     TypeError,
     "bytes",
   );
   assertThrows(
     () => {
-      Uint8ArrayUtils.toUint32sArray(Uint8Array.of(1));
+      BufferUtils.toUint32Iterable(Uint8Array.of(1).buffer);
     },
     RangeError,
     "bytes",
   );
   assertThrows(
     () => {
-      Uint8ArrayUtils.toUint32sArray(Uint8Array.of(1, 2));
+      BufferUtils.toUint32Iterable(Uint8Array.of(1, 2).buffer);
     },
     RangeError,
     "bytes",
   );
   assertThrows(
     () => {
-      Uint8ArrayUtils.toUint32sArray(Uint8Array.of(1, 2, 3));
+      BufferUtils.toUint32Iterable(Uint8Array.of(1, 2, 3).buffer);
     },
     RangeError,
     "bytes",
@@ -33,14 +33,17 @@ Deno.test("Uint8ArrayUtils.toUint32sArray(Uint8Array)", () => {
 
   assertStrictEquals(
     JSON.stringify([
-      ...Uint8ArrayUtils.toUint32sArray(Uint8Array.of(), ByteOrder.BIG_ENDIAN),
+      ...BufferUtils.toUint32Iterable(
+        Uint8Array.of().buffer,
+        ByteOrder.BIG_ENDIAN,
+      ),
     ]),
     "[]",
   );
   assertStrictEquals(
     JSON.stringify([
-      ...Uint8ArrayUtils.toUint32sArray(
-        Uint8Array.of(1, 0, 3, 2),
+      ...BufferUtils.toUint32Iterable(
+        Uint8Array.of(1, 0, 3, 2).buffer,
         ByteOrder.BIG_ENDIAN,
       ),
     ]),
@@ -48,8 +51,8 @@ Deno.test("Uint8ArrayUtils.toUint32sArray(Uint8Array)", () => {
   );
   assertStrictEquals(
     JSON.stringify([
-      ...Uint8ArrayUtils.toUint32sArray(
-        Uint8Array.of(1, 0, 3, 2, 5, 4, 7, 6),
+      ...BufferUtils.toUint32Iterable(
+        Uint8Array.of(1, 0, 3, 2, 5, 4, 7, 6).buffer,
         ByteOrder.BIG_ENDIAN,
       ),
     ]),
@@ -58,8 +61,8 @@ Deno.test("Uint8ArrayUtils.toUint32sArray(Uint8Array)", () => {
 
   assertStrictEquals(
     JSON.stringify([
-      ...Uint8ArrayUtils.toUint32sArray(
-        Uint8Array.of(),
+      ...BufferUtils.toUint32Iterable(
+        Uint8Array.of().buffer,
         ByteOrder.LITTLE_ENDIAN,
       ),
     ]),
@@ -67,8 +70,8 @@ Deno.test("Uint8ArrayUtils.toUint32sArray(Uint8Array)", () => {
   );
   assertStrictEquals(
     JSON.stringify([
-      ...Uint8ArrayUtils.toUint32sArray(
-        Uint8Array.of(1, 0, 3, 2),
+      ...BufferUtils.toUint32Iterable(
+        Uint8Array.of(1, 0, 3, 2).buffer,
         ByteOrder.LITTLE_ENDIAN,
       ),
     ]),
@@ -76,8 +79,8 @@ Deno.test("Uint8ArrayUtils.toUint32sArray(Uint8Array)", () => {
   );
   assertStrictEquals(
     JSON.stringify([
-      ...Uint8ArrayUtils.toUint32sArray(
-        Uint8Array.of(1, 0, 3, 2, 5, 4, 7, 6),
+      ...BufferUtils.toUint32Iterable(
+        Uint8Array.of(1, 0, 3, 2, 5, 4, 7, 6).buffer,
         ByteOrder.LITTLE_ENDIAN,
       ),
     ]),
@@ -86,23 +89,23 @@ Deno.test("Uint8ArrayUtils.toUint32sArray(Uint8Array)", () => {
 
   assertStrictEquals(
     JSON.stringify([
-      ...Uint8ArrayUtils.toUint32sArray(Uint8Array.of()),
+      ...BufferUtils.toUint32Iterable(Uint8Array.of().buffer),
     ]),
     "[]",
   );
   if (BufferUtils.isBigEndian()) {
     assertStrictEquals(
       JSON.stringify([
-        ...Uint8ArrayUtils.toUint32sArray(
-          Uint8Array.of(1, 0, 3, 2),
+        ...BufferUtils.toUint32Iterable(
+          Uint8Array.of(1, 0, 3, 2).buffer,
         ),
       ]),
       "[16777986]",
     );
     assertStrictEquals(
       JSON.stringify([
-        ...Uint8ArrayUtils.toUint32sArray(
-          Uint8Array.of(1, 0, 3, 2, 5, 4, 7, 6),
+        ...BufferUtils.toUint32Iterable(
+          Uint8Array.of(1, 0, 3, 2, 5, 4, 7, 6).buffer,
         ),
       ]),
       "[16777986,84150022]",
@@ -110,16 +113,16 @@ Deno.test("Uint8ArrayUtils.toUint32sArray(Uint8Array)", () => {
   } else {
     assertStrictEquals(
       JSON.stringify([
-        ...Uint8ArrayUtils.toUint32sArray(
-          Uint8Array.of(1, 0, 3, 2),
+        ...BufferUtils.toUint32Iterable(
+          Uint8Array.of(1, 0, 3, 2).buffer,
         ),
       ]),
       "[33751041]",
     );
     assertStrictEquals(
       JSON.stringify([
-        ...Uint8ArrayUtils.toUint32sArray(
-          Uint8Array.of(1, 0, 3, 2, 5, 4, 7, 6),
+        ...BufferUtils.toUint32Iterable(
+          Uint8Array.of(1, 0, 3, 2, 5, 4, 7, 6).buffer,
         ),
       ]),
       "[33751041,101123077]",
