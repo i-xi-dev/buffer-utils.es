@@ -1,5 +1,5 @@
 import { assertStrictEquals, assertThrows } from "../deps.ts";
-import { ByteOrder, BufferUtils, Uint8ArrayUtils } from "../../mod.ts";
+import { BufferUtils, ByteOrder, Uint8ArrayUtils } from "../../mod.ts";
 
 Deno.test("Uint8ArrayUtils.toUint16sArray(Uint8Array)", () => {
   assertThrows(

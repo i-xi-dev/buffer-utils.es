@@ -1,4 +1,5 @@
 export {
+  SafeInteger,
   Uint16,
   Uint32,
   Uint8,

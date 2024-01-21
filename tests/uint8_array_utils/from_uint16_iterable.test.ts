@@ -1,11 +1,11 @@
 import { assertStrictEquals, assertThrows } from "../deps.ts";
 import { Uint16 } from "../../deps.ts";
-import { ByteOrder, BufferUtils, Uint8ArrayUtils } from "../../mod.ts";
+import { BufferUtils, ByteOrder } from "../../mod.ts";
 
-Deno.test("Uint8ArrayUtils.fromUint16s(Array<Uint16>)", () => {
+Deno.test("BufferUtils.fromUint16Iterable(Array<Uint16>)", () => {
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint16s(0 as unknown as Array<Uint16>);
+      BufferUtils.fromUint16Iterable(0 as unknown as Array<Uint16>);
     },
     TypeError,
     "source",
@@ -13,28 +13,28 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Array<Uint16>)", () => {
 
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint16s([-1] as unknown as Array<Uint16>);
+      BufferUtils.fromUint16Iterable([-1] as unknown as Array<Uint16>);
     },
     RangeError,
     "source[*]",
   );
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint16s(["0"] as unknown as Array<Uint16>);
+      BufferUtils.fromUint16Iterable(["0"] as unknown as Array<Uint16>);
     },
     RangeError,
     "source[*]",
   );
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint16s([65536] as unknown as Array<Uint16>);
+      BufferUtils.fromUint16Iterable([65536] as unknown as Array<Uint16>);
     },
     RangeError,
     "source[*]",
   );
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint16s(
+      BufferUtils.fromUint16Iterable(
         [0, 65536] as unknown as Array<Uint16>,
       );
     },
@@ -42,12 +42,12 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Array<Uint16>)", () => {
     "source[*]",
   );
 
-  assertStrictEquals(Uint8ArrayUtils.fromUint16s([]).length, 0);
+  assertStrictEquals(BufferUtils.fromUint16Iterable([]).byteLength, 0);
 
-  const a1be = Uint8ArrayUtils.fromUint16s(
+  const a1be = new Uint8Array(BufferUtils.fromUint16Iterable(
     [0, 1, 65535],
     ByteOrder.BIG_ENDIAN,
-  );
+  ));
   assertStrictEquals(a1be.length, 6);
   assertStrictEquals(a1be[0], 0);
   assertStrictEquals(a1be[1], 0);
@@ -56,10 +56,10 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Array<Uint16>)", () => {
   assertStrictEquals(a1be[4], 255);
   assertStrictEquals(a1be[5], 255);
 
-  const a1le = Uint8ArrayUtils.fromUint16s(
+  const a1le = new Uint8Array(BufferUtils.fromUint16Iterable(
     [0, 1, 65535],
     ByteOrder.LITTLE_ENDIAN,
-  );
+  ));
   assertStrictEquals(a1le.length, 6);
   assertStrictEquals(a1le[0], 0);
   assertStrictEquals(a1le[1], 0);
@@ -68,7 +68,7 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Array<Uint16>)", () => {
   assertStrictEquals(a1le[4], 255);
   assertStrictEquals(a1le[5], 255);
 
-  const a1x = Uint8ArrayUtils.fromUint16s([0, 1, 65535]);
+  const a1x = new Uint8Array(BufferUtils.fromUint16Iterable([0, 1, 65535]));
   assertStrictEquals(a1x.length, 6);
   if (BufferUtils.isBigEndian()) {
     assertStrictEquals(a1x[0], 0);
@@ -87,16 +87,16 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Array<Uint16>)", () => {
   }
 });
 
-Deno.test("Uint8ArrayUtils.fromUint16s(Uint16Array)", () => {
+Deno.test("BufferUtils.fromUint16Iterable(Uint16Array)", () => {
   assertStrictEquals(
-    Uint8ArrayUtils.fromUint16s(Uint16Array.of()).length,
+    BufferUtils.fromUint16Iterable(Uint16Array.of()).byteLength,
     0,
   );
 
-  const a1be = Uint8ArrayUtils.fromUint16s(
+  const a1be = new Uint8Array(BufferUtils.fromUint16Iterable(
     Uint16Array.of(0, 1, 65535),
     ByteOrder.BIG_ENDIAN,
-  );
+  ));
   assertStrictEquals(a1be.length, 6);
   assertStrictEquals(a1be[0], 0);
   assertStrictEquals(a1be[1], 0);
@@ -105,10 +105,10 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Uint16Array)", () => {
   assertStrictEquals(a1be[4], 255);
   assertStrictEquals(a1be[5], 255);
 
-  const a1le = Uint8ArrayUtils.fromUint16s(
+  const a1le = new Uint8Array(BufferUtils.fromUint16Iterable(
     Uint16Array.of(0, 1, 65535),
     ByteOrder.LITTLE_ENDIAN,
-  );
+  ));
   assertStrictEquals(a1le.length, 6);
   assertStrictEquals(a1le[0], 0);
   assertStrictEquals(a1le[1], 0);
@@ -117,7 +117,9 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Uint16Array)", () => {
   assertStrictEquals(a1le[4], 255);
   assertStrictEquals(a1le[5], 255);
 
-  const a1x = Uint8ArrayUtils.fromUint16s(Uint16Array.of(0, 1, 65535));
+  const a1x = new Uint8Array(
+    BufferUtils.fromUint16Iterable(Uint16Array.of(0, 1, 65535)),
+  );
   assertStrictEquals(a1x.length, 6);
   if (BufferUtils.isBigEndian()) {
     assertStrictEquals(a1x[0], 0);
@@ -136,10 +138,10 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Uint16Array)", () => {
   }
 });
 
-Deno.test("Uint8ArrayUtils.fromUint16s(Generator<Uint16>)", () => {
+Deno.test("BufferUtils.fromUint16Iterable(Generator<Uint16>)", () => {
   const g0 = (function* () {
   })();
-  assertStrictEquals(Uint8ArrayUtils.fromUint16s(g0).length, 0);
+  assertStrictEquals(BufferUtils.fromUint16Iterable(g0).byteLength, 0);
 
   const g1 = (function* () {
     yield 0;
@@ -147,7 +149,9 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Generator<Uint16>)", () => {
     yield 65535;
   })();
 
-  const a1be = Uint8ArrayUtils.fromUint16s(g1, ByteOrder.BIG_ENDIAN);
+  const a1be = new Uint8Array(
+    BufferUtils.fromUint16Iterable(g1, ByteOrder.BIG_ENDIAN),
+  );
   assertStrictEquals(a1be.length, 6);
   assertStrictEquals(a1be[0], 0);
   assertStrictEquals(a1be[1], 0);
@@ -162,7 +166,9 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Generator<Uint16>)", () => {
     yield 65535;
   })();
 
-  const a1le = Uint8ArrayUtils.fromUint16s(g2, ByteOrder.LITTLE_ENDIAN);
+  const a1le = new Uint8Array(
+    BufferUtils.fromUint16Iterable(g2, ByteOrder.LITTLE_ENDIAN),
+  );
   assertStrictEquals(a1le.length, 6);
   assertStrictEquals(a1le[0], 0);
   assertStrictEquals(a1le[1], 0);
@@ -177,7 +183,7 @@ Deno.test("Uint8ArrayUtils.fromUint16s(Generator<Uint16>)", () => {
     yield 65535;
   })();
 
-  const a1x = Uint8ArrayUtils.fromUint16s(g3);
+  const a1x = new Uint8Array(BufferUtils.fromUint16Iterable(g3));
   assertStrictEquals(a1x.length, 6);
   if (BufferUtils.isBigEndian()) {
     assertStrictEquals(a1x[0], 0);

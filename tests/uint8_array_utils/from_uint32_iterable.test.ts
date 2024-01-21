@@ -1,11 +1,11 @@
 import { assertStrictEquals, assertThrows } from "../deps.ts";
 import { Uint32 } from "../../deps.ts";
-import { ByteOrder, BufferUtils, Uint8ArrayUtils } from "../../mod.ts";
+import { BufferUtils, ByteOrder } from "../../mod.ts";
 
-Deno.test("Uint8ArrayUtils.fromUint32s(Array<Uint32>)", () => {
+Deno.test("BufferUtils.fromUint32Iterable(Array<Uint32>)", () => {
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint32s(0 as unknown as Array<Uint32>);
+      BufferUtils.fromUint32Iterable(0 as unknown as Array<Uint32>);
     },
     TypeError,
     "source",
@@ -13,21 +13,21 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Array<Uint32>)", () => {
 
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint32s([-1] as unknown as Array<Uint32>);
+      BufferUtils.fromUint32Iterable([-1] as unknown as Array<Uint32>);
     },
     RangeError,
     "source[*]",
   );
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint32s(["0"] as unknown as Array<Uint32>);
+      BufferUtils.fromUint32Iterable(["0"] as unknown as Array<Uint32>);
     },
     RangeError,
     "source[*]",
   );
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint32s(
+      BufferUtils.fromUint32Iterable(
         [0x100000000] as unknown as Array<Uint32>,
       );
     },
@@ -36,7 +36,7 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Array<Uint32>)", () => {
   );
   assertThrows(
     () => {
-      Uint8ArrayUtils.fromUint32s(
+      BufferUtils.fromUint32Iterable(
         [0, 0x100000000] as unknown as Array<Uint32>,
       );
     },
@@ -44,12 +44,12 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Array<Uint32>)", () => {
     "source[*]",
   );
 
-  assertStrictEquals(Uint8ArrayUtils.fromUint32s([]).length, 0);
+  assertStrictEquals(BufferUtils.fromUint32Iterable([]).byteLength, 0);
 
-  const a1be = Uint8ArrayUtils.fromUint32s(
+  const a1be = new Uint8Array(BufferUtils.fromUint32Iterable(
     [0, 1, 0xFFFFFFFF],
     ByteOrder.BIG_ENDIAN,
-  );
+  ));
   assertStrictEquals(a1be.length, 12);
   assertStrictEquals(a1be[0], 0);
   assertStrictEquals(a1be[1], 0);
@@ -64,10 +64,10 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Array<Uint32>)", () => {
   assertStrictEquals(a1be[10], 255);
   assertStrictEquals(a1be[11], 255);
 
-  const a1le = Uint8ArrayUtils.fromUint32s(
+  const a1le = new Uint8Array(BufferUtils.fromUint32Iterable(
     [0, 1, 0xFFFFFFFF],
     ByteOrder.LITTLE_ENDIAN,
-  );
+  ));
   assertStrictEquals(a1le.length, 12);
   assertStrictEquals(a1le[0], 0);
   assertStrictEquals(a1le[1], 0);
@@ -82,7 +82,9 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Array<Uint32>)", () => {
   assertStrictEquals(a1le[10], 255);
   assertStrictEquals(a1le[11], 255);
 
-  const a1x = Uint8ArrayUtils.fromUint32s([0, 1, 0xFFFFFFFF]);
+  const a1x = new Uint8Array(
+    BufferUtils.fromUint32Iterable([0, 1, 0xFFFFFFFF]),
+  );
   assertStrictEquals(a1x.length, 12);
   if (BufferUtils.isBigEndian()) {
     assertStrictEquals(a1be[0], 0);
@@ -113,16 +115,16 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Array<Uint32>)", () => {
   }
 });
 
-Deno.test("Uint8ArrayUtils.fromUint32s(Uint32Array)", () => {
+Deno.test("BufferUtils.fromUint32Iterable(Uint32Array)", () => {
   assertStrictEquals(
-    Uint8ArrayUtils.fromUint32s(Uint32Array.of()).length,
+    BufferUtils.fromUint32Iterable(Uint32Array.of()).byteLength,
     0,
   );
 
-  const a1be = Uint8ArrayUtils.fromUint32s(
+  const a1be = new Uint8Array(BufferUtils.fromUint32Iterable(
     Uint32Array.of(0, 1, 0xFFFFFFFF),
     ByteOrder.BIG_ENDIAN,
-  );
+  ));
   assertStrictEquals(a1be.length, 12);
   assertStrictEquals(a1be[0], 0);
   assertStrictEquals(a1be[1], 0);
@@ -137,10 +139,10 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Uint32Array)", () => {
   assertStrictEquals(a1be[10], 255);
   assertStrictEquals(a1be[11], 255);
 
-  const a1le = Uint8ArrayUtils.fromUint32s(
+  const a1le = new Uint8Array(BufferUtils.fromUint32Iterable(
     Uint32Array.of(0, 1, 0xFFFFFFFF),
     ByteOrder.LITTLE_ENDIAN,
-  );
+  ));
   assertStrictEquals(a1le.length, 12);
   assertStrictEquals(a1le[0], 0);
   assertStrictEquals(a1le[1], 0);
@@ -155,9 +157,9 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Uint32Array)", () => {
   assertStrictEquals(a1le[10], 255);
   assertStrictEquals(a1le[11], 255);
 
-  const a1x = Uint8ArrayUtils.fromUint32s(
+  const a1x = new Uint8Array(BufferUtils.fromUint32Iterable(
     Uint32Array.of(0, 1, 0xFFFFFFFF),
-  );
+  ));
   assertStrictEquals(a1x.length, 12);
   if (BufferUtils.isBigEndian()) {
     assertStrictEquals(a1be[0], 0);
@@ -188,10 +190,10 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Uint32Array)", () => {
   }
 });
 
-Deno.test("Uint8ArrayUtils.fromUint32s(Generator<Uint32>)", () => {
+Deno.test("BufferUtils.fromUint32Iterable(Generator<Uint32>)", () => {
   const g0 = (function* () {
   })();
-  assertStrictEquals(Uint8ArrayUtils.fromUint32s(g0).length, 0);
+  assertStrictEquals(BufferUtils.fromUint32Iterable(g0).byteLength, 0);
 
   const g1 = (function* () {
     yield 0;
@@ -199,7 +201,9 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Generator<Uint32>)", () => {
     yield 0xFFFFFFFF;
   })();
 
-  const a1be = Uint8ArrayUtils.fromUint32s(g1, ByteOrder.BIG_ENDIAN);
+  const a1be = new Uint8Array(
+    BufferUtils.fromUint32Iterable(g1, ByteOrder.BIG_ENDIAN),
+  );
   assertStrictEquals(a1be.length, 12);
   assertStrictEquals(a1be[0], 0);
   assertStrictEquals(a1be[1], 0);
@@ -220,7 +224,9 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Generator<Uint32>)", () => {
     yield 0xFFFFFFFF;
   })();
 
-  const a1le = Uint8ArrayUtils.fromUint32s(g2, ByteOrder.LITTLE_ENDIAN);
+  const a1le = new Uint8Array(
+    BufferUtils.fromUint32Iterable(g2, ByteOrder.LITTLE_ENDIAN),
+  );
   assertStrictEquals(a1le.length, 12);
   assertStrictEquals(a1le[0], 0);
   assertStrictEquals(a1le[1], 0);
@@ -241,7 +247,7 @@ Deno.test("Uint8ArrayUtils.fromUint32s(Generator<Uint32>)", () => {
     yield 0xFFFFFFFF;
   })();
 
-  const a1x = Uint8ArrayUtils.fromUint32s(g3);
+  const a1x = new Uint8Array(BufferUtils.fromUint32Iterable(g3));
   assertStrictEquals(a1x.length, 12);
   if (BufferUtils.isBigEndian()) {
     assertStrictEquals(a1be[0], 0);
