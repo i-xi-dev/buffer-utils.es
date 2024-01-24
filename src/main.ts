@@ -76,7 +76,7 @@ export async function fromAsyncUint8Iterable(
     if (Uint8.isUint8(i) !== true) {
       throw new RangeError("source[*]");
     }
-    gb.put(i);
+    gb.put(i as Uint8);
   }
   return gb.slice().buffer;
 }
