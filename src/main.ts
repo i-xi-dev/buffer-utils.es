@@ -1,4 +1,4 @@
-import { Uint16, Uint32, Uint8 } from "../deps.ts";
+import { ObjectEx, Uint16, Uint32, Uint64, Uint8 } from "../deps.ts";
 import { ByteOrder } from "./byte_order.ts";
 import { GrowableBuffer } from "./growable_buffer.ts";
 
@@ -43,10 +43,7 @@ toFloat64Iterable
 export function fromUint8Iterable(
   source: Iterable<number /* Uint8 */>,
 ): ArrayBuffer {
-  if (!source) {
-    throw new TypeError("source");
-  }
-  if (((typeof source === "object") && (Symbol.iterator in source)) !== true) {
+  if (ObjectEx.isIterableObject(source) !== true) {
     throw new TypeError("source");
   }
 
@@ -61,12 +58,7 @@ export function fromUint8Iterable(
 export async function fromAsyncUint8Iterable(
   source: AsyncIterable<number /* Uint8 */>,
 ): Promise<ArrayBuffer> {
-  if (!source) {
-    throw new TypeError("source");
-  }
-  if (
-    ((typeof source === "object") && (Symbol.asyncIterator in source)) !== true
-  ) {
+  if (ObjectEx.isAsyncIterableObject(source) !== true) {
     throw new TypeError("source");
   }
 
@@ -95,12 +87,10 @@ export function fromUint16Iterable(
   source: Iterable<Uint16>,
   byteOrder?: ByteOrder,
 ): ArrayBuffer {
-  if (!source) {
+  if (ObjectEx.isIterableObject(source) !== true) {
     throw new TypeError("source");
   }
-  if (((typeof source === "object") && (Symbol.iterator in source)) !== true) {
-    throw new TypeError("source");
-  }
+
   const sourceLength =
     (("length" in source) && (typeof source.length === "number"))
       ? source.length
@@ -140,12 +130,7 @@ export async function fromAsyncUint16Iterable(
   source: AsyncIterable<Uint16>,
   byteOrder?: ByteOrder,
 ): Promise<ArrayBuffer> {
-  if (!source) {
-    throw new TypeError("source");
-  }
-  if (
-    ((typeof source === "object") && (Symbol.asyncIterator in source)) !== true
-  ) {
+  if (ObjectEx.isAsyncIterableObject(source) !== true) {
     throw new TypeError("source");
   }
 
@@ -221,12 +206,10 @@ export function fromUint32Iterable(
   source: Iterable<Uint32>,
   byteOrder?: ByteOrder,
 ): ArrayBuffer {
-  if (!source) {
+  if (ObjectEx.isIterableObject(source) !== true) {
     throw new TypeError("source");
   }
-  if (((typeof source === "object") && (Symbol.iterator in source)) !== true) {
-    throw new TypeError("source");
-  }
+
   const sourceLength =
     (("length" in source) && (typeof source.length === "number"))
       ? source.length
@@ -266,12 +249,7 @@ export async function fromAsyncUint32Iterable(
   source: AsyncIterable<Uint32>,
   byteOrder?: ByteOrder,
 ): Promise<ArrayBuffer> {
-  if (!source) {
-    throw new TypeError("source");
-  }
-  if (
-    ((typeof source === "object") && (Symbol.asyncIterator in source)) !== true
-  ) {
+  if (ObjectEx.isAsyncIterableObject(source) !== true) {
     throw new TypeError("source");
   }
 
@@ -342,6 +320,52 @@ export function toUint32Iterable(
     return [...(new Uint32Array(bytes))];
   }
 }
+
+export function fromBigUint64Iterable(
+  source: Iterable<bigint>,
+  byteOrder?: ByteOrder,
+): ArrayBuffer {
+  if (ObjectEx.isIterableObject(source) !== true) {
+    throw new TypeError("source");
+  }
+
+  const sourceLength =
+    (("length" in source) && (typeof source.length === "number"))
+      ? source.length
+      : undefined;
+
+  if (
+    Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
+    (byteOrder !== BYTE_ORDER)
+  ) {
+    const gb = new GrowableBuffer(sourceLength);
+    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
+    const tmp = new ArrayBuffer(BigUint64Array.BYTES_PER_ELEMENT);
+    const tmpView = new DataView(tmp);
+
+    for (const i of source) {
+      if (Uint64.isUint64(i) !== true) {
+        throw new RangeError("source[*]");
+      }
+      tmpView.setBigUint64(0, i, littleEndian);
+      gb.putRange(tmpView);
+    }
+
+    return gb.slice().buffer;
+  } else {
+    // 実行環境のバイトオーダー
+
+    //XXX ArrayLikeでないとビルドできない、仕様はIterableでは？？
+    return BigUint64Array.from(source as unknown as ArrayLike<bigint>, (i) => {
+      if (Uint64.isUint64(i) !== true) {
+        throw new RangeError("source[*]");
+      }
+      return i;
+    }).buffer;
+  }
+}
+
+//TODO startsWith
 
 /** @deprecated */
 export function isArrayOfUint8(value: unknown): value is Array<Uint8> {
