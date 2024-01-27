@@ -393,6 +393,45 @@ export function fromBigUint64Iterable(
   }
 }
 
+export async function fromAsyncUint64Iterable(
+  source: AsyncIterable<Uint64>,
+  byteOrder?: ByteOrder,
+): Promise<ArrayBuffer> {
+  if (ObjectEx.isAsyncIterableObject(source) !== true) {
+    throw new TypeError("source");
+  }
+
+  if (
+    Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
+    (byteOrder !== BYTE_ORDER)
+  ) {
+    return _fromAsyncUintNIterable(
+      source,
+      BigUint64Array,
+      Uint64.isUint64 as (i: unknown) => i is Uint64,
+      (v, i, e) => {
+        v.setBigUint64(0, i, e);
+      },
+      byteOrder!,
+    );
+  } else {
+    // 実行環境のバイトオーダー
+
+    //TODO BigUint64Array.fromAsyncが広く実装されたらそちらに変更する
+    const gb = new GrowableBuffer();
+    const tmpView = new BigUint64Array(1);
+
+    for await (const i of source) {
+      if (Uint64.isUint64(i) !== true) {
+        throw new RangeError("source[*]");
+      }
+      tmpView[0] = i;
+      gb.putRange(tmpView);
+    }
+    return gb.slice().buffer;
+  }
+}
+
 //TODO startsWith
 
 /** @deprecated */
