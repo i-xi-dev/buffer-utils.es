@@ -435,6 +435,39 @@ export function toBigUint64Iterable(
   }, byteOrder);
 }
 
+type _Uint8s = Uint8Array | Array<Uint8> | ArrayBuffer;
+
+export function bytesStartsWith(a: _Uint8s, b: _Uint8s): boolean {
+  let aArray: Uint8Array | Array<Uint8>;
+  if (a instanceof ArrayBuffer) {
+    aArray = new Uint8Array(a);
+  } else if (a instanceof Uint8Array) {
+    aArray = a;
+  } else if (Array.isArray(a) && a.every((ai) => Uint8.isUint8(ai))) {
+    aArray = a;
+  } else {
+    throw new TypeError("a");
+  }
+
+  let bArray: Uint8Array | Array<Uint8>;
+  if (b instanceof ArrayBuffer) {
+    bArray = new Uint8Array(b);
+  } else if (b instanceof Uint8Array) {
+    bArray = b;
+  } else if (Array.isArray(b) && b.every((bi) => Uint8.isUint8(bi))) {
+    bArray = b;
+  } else {
+    throw new TypeError("b");
+  }
+
+  for (let i = 0; i < bArray.length; i++) {
+    if (aArray[i] !== bArray[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 //TODO startsWith
 
 /** @deprecated */
