@@ -75,7 +75,9 @@ Deno.test("BufferUtils.fromAsyncBigUint64Iterable(AsyncGenerator<Uint64>)", asyn
     yield 0xFFFF_FFFF_FFFF_FFFFn;
   })();
 
-  const a1 = new BigUint64Array(await BufferUtils.fromAsyncBigUint64Iterable(g1));
+  const a1 = new BigUint64Array(
+    await BufferUtils.fromAsyncBigUint64Iterable(g1),
+  );
   assertStrictEquals(a1.length, 3);
   assertStrictEquals(a1[0], 0n);
   assertStrictEquals(a1[1], 1n);
