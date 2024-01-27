@@ -36,9 +36,6 @@ toInt32Iterable
 fromBigInt64Iterable
 fromAsyncBigInt64Iterable
 toBigInt64Iterable
-fromBigUint64Iterable
-fromAsyncBigUint64Iterable
-toBigUint64Iterable
 fromFloat32Iterable
 fromAsyncFloat32Iterable
 toFloat32Iterable
@@ -90,7 +87,7 @@ export function toUint8Iterable /* as Array */(
   return (new Uint8Array(bytes))[Symbol.iterator]() as Iterable<Uint8>;
 }
 
-type _X<T extends (number | bigint)> = (
+type _Setter<T extends (number | bigint)> = (
   dataView: DataView,
   value: T,
   littleEndian: boolean,
@@ -103,7 +100,7 @@ function _fromUintNIterable<T extends (number | bigint)>(
     | Uint32ArrayConstructor
     | BigUint64ArrayConstructor,
   elementValidator: (i: unknown) => i is T,
-  viewSetter: _X<T>,
+  viewSetter: _Setter<T>,
   byteOrder: ByteOrder,
 ): ArrayBuffer {
   const sourceLength =
@@ -133,7 +130,7 @@ async function _fromAsyncUintNIterable<T extends (number | bigint)>(
     | Uint32ArrayConstructor
     | BigUint64ArrayConstructor,
   elementValidator: (i: unknown) => i is T,
-  viewSetter: _X<T>,
+  viewSetter: _Setter<T>,
   byteOrder: ByteOrder,
 ): Promise<ArrayBuffer> {
   const gb = new GrowableBuffer();
@@ -151,6 +148,49 @@ async function _fromAsyncUintNIterable<T extends (number | bigint)>(
   return gb.slice().buffer;
 }
 
+type _Getter<T extends (number | bigint)> = (
+  dataView: DataView,
+  pos: SafeInteger,
+  littleEndian: boolean,
+) => T;
+
+function _toUintNIterable<T extends (number | bigint)>(
+  bytes: ArrayBuffer,
+  uintNArrayCtor:
+    | Uint16ArrayConstructor
+    | Uint32ArrayConstructor
+    | BigUint64ArrayConstructor,
+  viewGetter: _Getter<T>,
+  byteOrder?: ByteOrder,
+): Iterable<T> {
+  const bytesPerElement = uintNArrayCtor.BYTES_PER_ELEMENT;
+  if ((bytes instanceof ArrayBuffer) !== true) {
+    throw new TypeError("bytes");
+  }
+  if ((bytes.byteLength % bytesPerElement) !== 0) {
+    throw new RangeError("bytes");
+  }
+
+  if (
+    Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
+    (byteOrder !== BYTE_ORDER)
+  ) {
+    const clone = bytes.slice(0);
+    const reader = new DataView(clone);
+    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
+
+    return (function* () {
+      for (let i = 0; i < (clone.byteLength / bytesPerElement); i++) {
+        yield viewGetter(reader, i * bytesPerElement, littleEndian);
+      }
+    })() as Iterable<T>;
+  } else {
+    // 実行環境のバイトオーダー
+
+    return (new uintNArrayCtor(bytes))[Symbol.iterator]() as Iterable<T>;
+  }
+}
+
 export function fromUint16Iterable(
   source: Iterable<Uint16>,
   byteOrder?: ByteOrder,
@@ -163,7 +203,7 @@ export function fromUint16Iterable(
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    return _fromUintNIterable(
+    return _fromUintNIterable<Uint16>(
       source,
       Uint16Array,
       Uint16.isUint16 as (i: unknown) => i is Uint16,
@@ -196,7 +236,7 @@ export async function fromAsyncUint16Iterable(
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    return _fromAsyncUintNIterable(
+    return _fromAsyncUintNIterable<Uint16>(
       source,
       Uint16Array,
       Uint16.isUint16 as (i: unknown) => i is Uint16,
@@ -227,32 +267,9 @@ export function toUint16Iterable(
   bytes: ArrayBuffer,
   byteOrder?: ByteOrder,
 ): Iterable<Uint16> {
-  if ((bytes instanceof ArrayBuffer) !== true) {
-    throw new TypeError("bytes");
-  }
-  if ((bytes.byteLength % Uint16.BYTES) !== 0) {
-    throw new RangeError("bytes");
-    //XXX ゼロで埋める？
-  }
-
-  if (
-    Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
-    (byteOrder !== BYTE_ORDER)
-  ) {
-    const result: Array<Uint16> = [];
-    const reader = new DataView(bytes);
-    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
-
-    for (let i = 0; i < (bytes.byteLength / Uint16.BYTES); i++) {
-      result.push(reader.getUint16(i * Uint16.BYTES, littleEndian));
-    }
-
-    return result[Symbol.iterator]();
-  } else {
-    // 実行環境のバイトオーダー
-
-    return (new Uint16Array(bytes))[Symbol.iterator]();
-  }
+  return _toUintNIterable<Uint16>(bytes, Uint16Array, (v, o, e) => {
+    return v.getUint16(o, e);
+  }, byteOrder);
 }
 
 export function fromUint32Iterable(
@@ -267,7 +284,7 @@ export function fromUint32Iterable(
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    return _fromUintNIterable(
+    return _fromUintNIterable<Uint32>(
       source,
       Uint32Array,
       Uint32.isUint32 as (i: unknown) => i is Uint32,
@@ -300,7 +317,7 @@ export async function fromAsyncUint32Iterable(
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    return _fromAsyncUintNIterable(
+    return _fromAsyncUintNIterable<Uint32>(
       source,
       Uint32Array,
       Uint32.isUint32 as (i: unknown) => i is Uint32,
@@ -331,32 +348,9 @@ export function toUint32Iterable(
   bytes: ArrayBuffer,
   byteOrder?: ByteOrder,
 ): Iterable<Uint32> {
-  if ((bytes instanceof ArrayBuffer) !== true) {
-    throw new TypeError("bytes");
-  }
-  if ((bytes.byteLength % Uint32.BYTES) !== 0) {
-    throw new RangeError("bytes");
-    //XXX ゼロで埋める？
-  }
-
-  if (
-    Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
-    (byteOrder !== BYTE_ORDER)
-  ) {
-    const result: Array<Uint32> = [];
-    const reader = new DataView(bytes);
-    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
-
-    for (let i = 0; i < (bytes.byteLength / Uint32.BYTES); i++) {
-      result.push(reader.getUint32(i * Uint32.BYTES, littleEndian));
-    }
-
-    return result[Symbol.iterator]();
-  } else {
-    // 実行環境のバイトオーダー
-
-    return (new Uint32Array(bytes))[Symbol.iterator]();
-  }
+  return _toUintNIterable<Uint32>(bytes, Uint32Array, (v, o, e) => {
+    return v.getUint32(o, e);
+  }, byteOrder);
 }
 
 export function fromBigUint64Iterable(
@@ -371,7 +365,7 @@ export function fromBigUint64Iterable(
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    return _fromUintNIterable(
+    return _fromUintNIterable<Uint64>(
       source,
       BigUint64Array,
       Uint64.isUint64 as (i: unknown) => i is Uint64,
@@ -393,7 +387,7 @@ export function fromBigUint64Iterable(
   }
 }
 
-export async function fromAsyncUint64Iterable(
+export async function fromAsyncBigUint64Iterable(
   source: AsyncIterable<Uint64>,
   byteOrder?: ByteOrder,
 ): Promise<ArrayBuffer> {
@@ -405,7 +399,7 @@ export async function fromAsyncUint64Iterable(
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    return _fromAsyncUintNIterable(
+    return _fromAsyncUintNIterable<Uint64>(
       source,
       BigUint64Array,
       Uint64.isUint64 as (i: unknown) => i is Uint64,
@@ -430,6 +424,15 @@ export async function fromAsyncUint64Iterable(
     }
     return gb.slice().buffer;
   }
+}
+
+export function toBigUint64Iterable(
+  bytes: ArrayBuffer,
+  byteOrder?: ByteOrder,
+): Iterable<Uint64> {
+  return _toUintNIterable<Uint64>(bytes, BigUint64Array, (v, o, e) => {
+    return v.getBigUint64(o, e);
+  }, byteOrder);
 }
 
 //TODO startsWith
