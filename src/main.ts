@@ -1,4 +1,11 @@
-import { ObjectEx, Uint16, Uint32, Uint64, Uint8 } from "../deps.ts";
+import {
+  ObjectEx,
+  SafeInteger,
+  Uint16,
+  Uint32,
+  Uint64,
+  Uint8,
+} from "../deps.ts";
 import { ByteOrder } from "./byte_order.ts";
 import { GrowableBuffer } from "./growable_buffer.ts";
 
@@ -80,7 +87,50 @@ export function toUint8Iterable /* as Array */(
     throw new TypeError("bytes");
   }
 
-  return [...new Uint8Array(bytes)] as Array<Uint8>;
+  return (new Uint8Array(bytes))[Symbol.iterator]() as Iterable<Uint8>;
+}
+
+type _X<T extends (number | bigint)> = (
+  dataView: DataView,
+  value: T,
+  littleEndian: boolean,
+) => void;
+
+function _fromUintNIterable<T extends (number | bigint)>(
+  source: Iterable<T>,
+  uintNArrayCtor:
+    | Uint16ArrayConstructor
+    | Uint32ArrayConstructor
+    | BigUint64ArrayConstructor,
+  elementValidator: (i: unknown) => i is T,
+  viewSetter: _X<T>,
+  byteOrder: ByteOrder,
+): ArrayBuffer {
+  const sourceLength =
+    (("length" in source) && (typeof source.length === "number"))
+      ? source.length
+      : undefined;
+
+  const gb = new GrowableBuffer(sourceLength);
+  const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
+  const tmp = new ArrayBuffer(uintNArrayCtor.BYTES_PER_ELEMENT);
+  const tmpView = new DataView(tmp);
+
+  for (const i of source) {
+    if (elementValidator(i) !== true) {
+      throw new RangeError("source[*]");
+    }
+    try {
+      viewSetter(tmpView, i, littleEndian);
+    } catch (e) {
+      console.log(i);
+      console.log(littleEndian);
+      console.log(e);
+    }
+    gb.putRange(tmpView);
+  }
+
+  return gb.slice().buffer;
 }
 
 export function fromUint16Iterable(
@@ -91,29 +141,19 @@ export function fromUint16Iterable(
     throw new TypeError("source");
   }
 
-  const sourceLength =
-    (("length" in source) && (typeof source.length === "number"))
-      ? source.length
-      : undefined;
-
   if (
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    const gb = new GrowableBuffer(sourceLength);
-    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
-    const tmp = new ArrayBuffer(Uint16Array.BYTES_PER_ELEMENT);
-    const tmpView = new DataView(tmp);
-
-    for (const i of source) {
-      if (Uint16.isUint16(i) !== true) {
-        throw new RangeError("source[*]");
-      }
-      tmpView.setInt16(0, i, littleEndian);
-      gb.putRange(tmpView);
-    }
-
-    return gb.slice().buffer;
+    return _fromUintNIterable(
+      source,
+      Uint16Array,
+      Uint16.isUint16 as (i: unknown) => i is Uint16,
+      (v, i, e) => {
+        v.setUint16(0, i, e);
+      },
+      byteOrder!,
+    );
   } else {
     // 実行環境のバイトオーダー
 
@@ -173,7 +213,7 @@ export async function fromAsyncUint16Iterable(
 export function toUint16Iterable(
   bytes: ArrayBuffer,
   byteOrder?: ByteOrder,
-): Array<Uint16> {
+): Iterable<Uint16> {
   if ((bytes instanceof ArrayBuffer) !== true) {
     throw new TypeError("bytes");
   }
@@ -194,11 +234,11 @@ export function toUint16Iterable(
       result.push(reader.getUint16(i * Uint16.BYTES, littleEndian));
     }
 
-    return result;
+    return result[Symbol.iterator]();
   } else {
     // 実行環境のバイトオーダー
 
-    return [...(new Uint16Array(bytes))];
+    return (new Uint16Array(bytes))[Symbol.iterator]();
   }
 }
 
@@ -210,29 +250,19 @@ export function fromUint32Iterable(
     throw new TypeError("source");
   }
 
-  const sourceLength =
-    (("length" in source) && (typeof source.length === "number"))
-      ? source.length
-      : undefined;
-
   if (
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    const gb = new GrowableBuffer(sourceLength);
-    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
-    const tmp = new ArrayBuffer(Uint32Array.BYTES_PER_ELEMENT);
-    const tmpView = new DataView(tmp);
-
-    for (const i of source) {
-      if (Uint32.isUint32(i) !== true) {
-        throw new RangeError("source[*]");
-      }
-      tmpView.setInt32(0, i, littleEndian);
-      gb.putRange(tmpView);
-    }
-
-    return gb.slice().buffer;
+    return _fromUintNIterable(
+      source,
+      Uint32Array,
+      Uint32.isUint32 as (i: unknown) => i is Uint32,
+      (v, i, e) => {
+        v.setUint32(0, i, e);
+      },
+      byteOrder!,
+    );
   } else {
     // 実行環境のバイトオーダー
 
@@ -292,7 +322,7 @@ export async function fromAsyncUint32Iterable(
 export function toUint32Iterable(
   bytes: ArrayBuffer,
   byteOrder?: ByteOrder,
-): Array<Uint32> {
+): Iterable<Uint32> {
   if ((bytes instanceof ArrayBuffer) !== true) {
     throw new TypeError("bytes");
   }
@@ -313,11 +343,11 @@ export function toUint32Iterable(
       result.push(reader.getUint32(i * Uint32.BYTES, littleEndian));
     }
 
-    return result;
+    return result[Symbol.iterator]();
   } else {
     // 実行環境のバイトオーダー
 
-    return [...(new Uint32Array(bytes))];
+    return (new Uint32Array(bytes))[Symbol.iterator]();
   }
 }
 
@@ -329,29 +359,19 @@ export function fromBigUint64Iterable(
     throw new TypeError("source");
   }
 
-  const sourceLength =
-    (("length" in source) && (typeof source.length === "number"))
-      ? source.length
-      : undefined;
-
   if (
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    const gb = new GrowableBuffer(sourceLength);
-    const littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
-    const tmp = new ArrayBuffer(BigUint64Array.BYTES_PER_ELEMENT);
-    const tmpView = new DataView(tmp);
-
-    for (const i of source) {
-      if (Uint64.isUint64(i) !== true) {
-        throw new RangeError("source[*]");
-      }
-      tmpView.setBigUint64(0, i, littleEndian);
-      gb.putRange(tmpView);
-    }
-
-    return gb.slice().buffer;
+    return _fromUintNIterable(
+      source,
+      BigUint64Array,
+      Uint64.isUint64 as (i: unknown) => i is Uint64,
+      (v, i, e) => {
+        v.setBigUint64(0, i, e);
+      },
+      byteOrder!,
+    );
   } else {
     // 実行環境のバイトオーダー
 
