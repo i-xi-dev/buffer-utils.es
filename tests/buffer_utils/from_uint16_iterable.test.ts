@@ -49,6 +49,15 @@ Deno.test("BufferUtils.fromUint16Iterable(Array<Uint16>)", () => {
     RangeError,
     "source[*]",
   );
+  assertThrows(
+    () => {
+      BufferUtils.fromUint16Iterable(
+        [0, -1] as unknown as Array<Uint16>,
+      );
+    },
+    RangeError,
+    "source[*]",
+  );
 
   assertStrictEquals(BufferUtils.fromUint16Iterable([]).byteLength, 0);
 

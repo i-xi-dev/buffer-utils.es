@@ -51,6 +51,15 @@ Deno.test("BufferUtils.fromUint32Iterable(Array<Uint32>)", () => {
     RangeError,
     "source[*]",
   );
+  assertThrows(
+    () => {
+      BufferUtils.fromUint32Iterable(
+        [0, -1] as unknown as Array<Uint32>,
+      );
+    },
+    RangeError,
+    "source[*]",
+  );
 
   assertStrictEquals(BufferUtils.fromUint32Iterable([]).byteLength, 0);
 
@@ -95,31 +104,31 @@ Deno.test("BufferUtils.fromUint32Iterable(Array<Uint32>)", () => {
   );
   assertStrictEquals(a1x.length, 12);
   if (BufferUtils.isBigEndian()) {
-    assertStrictEquals(a1be[0], 0);
-    assertStrictEquals(a1be[1], 0);
-    assertStrictEquals(a1be[2], 0);
-    assertStrictEquals(a1be[3], 0);
-    assertStrictEquals(a1be[4], 0);
-    assertStrictEquals(a1be[5], 0);
-    assertStrictEquals(a1be[6], 0);
-    assertStrictEquals(a1be[7], 1);
-    assertStrictEquals(a1be[8], 255);
-    assertStrictEquals(a1be[9], 255);
-    assertStrictEquals(a1be[10], 255);
-    assertStrictEquals(a1be[11], 255);
+    assertStrictEquals(a1x[0], 0);
+    assertStrictEquals(a1x[1], 0);
+    assertStrictEquals(a1x[2], 0);
+    assertStrictEquals(a1x[3], 0);
+    assertStrictEquals(a1x[4], 0);
+    assertStrictEquals(a1x[5], 0);
+    assertStrictEquals(a1x[6], 0);
+    assertStrictEquals(a1x[7], 1);
+    assertStrictEquals(a1x[8], 255);
+    assertStrictEquals(a1x[9], 255);
+    assertStrictEquals(a1x[10], 255);
+    assertStrictEquals(a1x[11], 255);
   } else {
-    assertStrictEquals(a1le[0], 0);
-    assertStrictEquals(a1le[1], 0);
-    assertStrictEquals(a1le[2], 0);
-    assertStrictEquals(a1le[3], 0);
-    assertStrictEquals(a1le[4], 1);
-    assertStrictEquals(a1le[5], 0);
-    assertStrictEquals(a1le[6], 0);
-    assertStrictEquals(a1le[7], 0);
-    assertStrictEquals(a1le[8], 255);
-    assertStrictEquals(a1le[9], 255);
-    assertStrictEquals(a1le[10], 255);
-    assertStrictEquals(a1le[11], 255);
+    assertStrictEquals(a1x[0], 0);
+    assertStrictEquals(a1x[1], 0);
+    assertStrictEquals(a1x[2], 0);
+    assertStrictEquals(a1x[3], 0);
+    assertStrictEquals(a1x[4], 1);
+    assertStrictEquals(a1x[5], 0);
+    assertStrictEquals(a1x[6], 0);
+    assertStrictEquals(a1x[7], 0);
+    assertStrictEquals(a1x[8], 255);
+    assertStrictEquals(a1x[9], 255);
+    assertStrictEquals(a1x[10], 255);
+    assertStrictEquals(a1x[11], 255);
   }
 });
 
@@ -170,31 +179,31 @@ Deno.test("BufferUtils.fromUint32Iterable(Uint32Array)", () => {
   ));
   assertStrictEquals(a1x.length, 12);
   if (BufferUtils.isBigEndian()) {
-    assertStrictEquals(a1be[0], 0);
-    assertStrictEquals(a1be[1], 0);
-    assertStrictEquals(a1be[2], 0);
-    assertStrictEquals(a1be[3], 0);
-    assertStrictEquals(a1be[4], 0);
-    assertStrictEquals(a1be[5], 0);
-    assertStrictEquals(a1be[6], 0);
-    assertStrictEquals(a1be[7], 1);
-    assertStrictEquals(a1be[8], 255);
-    assertStrictEquals(a1be[9], 255);
-    assertStrictEquals(a1be[10], 255);
-    assertStrictEquals(a1be[11], 255);
+    assertStrictEquals(a1x[0], 0);
+    assertStrictEquals(a1x[1], 0);
+    assertStrictEquals(a1x[2], 0);
+    assertStrictEquals(a1x[3], 0);
+    assertStrictEquals(a1x[4], 0);
+    assertStrictEquals(a1x[5], 0);
+    assertStrictEquals(a1x[6], 0);
+    assertStrictEquals(a1x[7], 1);
+    assertStrictEquals(a1x[8], 255);
+    assertStrictEquals(a1x[9], 255);
+    assertStrictEquals(a1x[10], 255);
+    assertStrictEquals(a1x[11], 255);
   } else {
-    assertStrictEquals(a1le[0], 0);
-    assertStrictEquals(a1le[1], 0);
-    assertStrictEquals(a1le[2], 0);
-    assertStrictEquals(a1le[3], 0);
-    assertStrictEquals(a1le[4], 1);
-    assertStrictEquals(a1le[5], 0);
-    assertStrictEquals(a1le[6], 0);
-    assertStrictEquals(a1le[7], 0);
-    assertStrictEquals(a1le[8], 255);
-    assertStrictEquals(a1le[9], 255);
-    assertStrictEquals(a1le[10], 255);
-    assertStrictEquals(a1le[11], 255);
+    assertStrictEquals(a1x[0], 0);
+    assertStrictEquals(a1x[1], 0);
+    assertStrictEquals(a1x[2], 0);
+    assertStrictEquals(a1x[3], 0);
+    assertStrictEquals(a1x[4], 1);
+    assertStrictEquals(a1x[5], 0);
+    assertStrictEquals(a1x[6], 0);
+    assertStrictEquals(a1x[7], 0);
+    assertStrictEquals(a1x[8], 255);
+    assertStrictEquals(a1x[9], 255);
+    assertStrictEquals(a1x[10], 255);
+    assertStrictEquals(a1x[11], 255);
   }
 });
 
@@ -258,30 +267,30 @@ Deno.test("BufferUtils.fromUint32Iterable(Generator<Uint32>)", () => {
   const a1x = new Uint8Array(BufferUtils.fromUint32Iterable(g3));
   assertStrictEquals(a1x.length, 12);
   if (BufferUtils.isBigEndian()) {
-    assertStrictEquals(a1be[0], 0);
-    assertStrictEquals(a1be[1], 0);
-    assertStrictEquals(a1be[2], 0);
-    assertStrictEquals(a1be[3], 0);
-    assertStrictEquals(a1be[4], 0);
-    assertStrictEquals(a1be[5], 0);
-    assertStrictEquals(a1be[6], 0);
-    assertStrictEquals(a1be[7], 1);
-    assertStrictEquals(a1be[8], 255);
-    assertStrictEquals(a1be[9], 255);
-    assertStrictEquals(a1be[10], 255);
-    assertStrictEquals(a1be[11], 255);
+    assertStrictEquals(a1x[0], 0);
+    assertStrictEquals(a1x[1], 0);
+    assertStrictEquals(a1x[2], 0);
+    assertStrictEquals(a1x[3], 0);
+    assertStrictEquals(a1x[4], 0);
+    assertStrictEquals(a1x[5], 0);
+    assertStrictEquals(a1x[6], 0);
+    assertStrictEquals(a1x[7], 1);
+    assertStrictEquals(a1x[8], 255);
+    assertStrictEquals(a1x[9], 255);
+    assertStrictEquals(a1x[10], 255);
+    assertStrictEquals(a1x[11], 255);
   } else {
-    assertStrictEquals(a1le[0], 0);
-    assertStrictEquals(a1le[1], 0);
-    assertStrictEquals(a1le[2], 0);
-    assertStrictEquals(a1le[3], 0);
-    assertStrictEquals(a1le[4], 1);
-    assertStrictEquals(a1le[5], 0);
-    assertStrictEquals(a1le[6], 0);
-    assertStrictEquals(a1le[7], 0);
-    assertStrictEquals(a1le[8], 255);
-    assertStrictEquals(a1le[9], 255);
-    assertStrictEquals(a1le[10], 255);
-    assertStrictEquals(a1le[11], 255);
+    assertStrictEquals(a1x[0], 0);
+    assertStrictEquals(a1x[1], 0);
+    assertStrictEquals(a1x[2], 0);
+    assertStrictEquals(a1x[3], 0);
+    assertStrictEquals(a1x[4], 1);
+    assertStrictEquals(a1x[5], 0);
+    assertStrictEquals(a1x[6], 0);
+    assertStrictEquals(a1x[7], 0);
+    assertStrictEquals(a1x[8], 255);
+    assertStrictEquals(a1x[9], 255);
+    assertStrictEquals(a1x[10], 255);
+    assertStrictEquals(a1x[11], 255);
   }
 });

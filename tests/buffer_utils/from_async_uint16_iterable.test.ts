@@ -112,4 +112,18 @@ Deno.test("BufferUtils.fromAsyncUint16Iterable(AsyncGenerator<any>)", () => {
     RangeError,
     "source[*]",
   );
+
+  const g3 = (async function* () {
+    yield 0;
+    yield 1;
+    yield -1;
+  })();
+
+  assertRejects(
+    async () => {
+      await BufferUtils.fromAsyncUint16Iterable(g3);
+    },
+    RangeError,
+    "source[*]",
+  );
 });

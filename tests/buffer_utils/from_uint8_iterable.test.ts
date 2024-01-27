@@ -47,6 +47,13 @@ Deno.test("BufferUtils.fromUint8Iterable(Array<Uint8>)", () => {
     RangeError,
     "source[*]",
   );
+  assertThrows(
+    () => {
+      BufferUtils.fromUint8Iterable([0, -1] as unknown as Array<Uint8>);
+    },
+    RangeError,
+    "source[*]",
+  );
 
   assertStrictEquals(BufferUtils.fromUint8Iterable([]).byteLength, 0);
 
