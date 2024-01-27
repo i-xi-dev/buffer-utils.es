@@ -435,35 +435,24 @@ export function toBigUint64Iterable(
   }, byteOrder);
 }
 
-type _Uint8s = Uint8Array | Uint8ClampedArray | Array<Uint8> | ArrayBuffer;
+type _Uint8s = Uint8Array | Uint8ClampedArray | Array<Uint8>;
+type _Uint8sOrBuffer = _Uint8s | ArrayBuffer;
 
-export function bytesAStartsWithBytesB(a: _Uint8s, b: _Uint8s): boolean {
-  let aArray: Uint8Array | Uint8ClampedArray | Array<Uint8>;
-  if (a instanceof ArrayBuffer) {
-    aArray = new Uint8Array(a);
-  } else if ((a instanceof Uint8Array) || (a instanceof Uint8ClampedArray)) {
-    aArray = a;
-  } else if (Array.isArray(a) && a.every((ai) => Uint8.isUint8(ai))) {
-    aArray = a;
+function _toIterableUint8s(source: _Uint8sOrBuffer, label: string): _Uint8s {
+  if (source instanceof ArrayBuffer) {
+    return new Uint8Array(source);
+  } else if (
+    (source instanceof Uint8Array) || (source instanceof Uint8ClampedArray)
+  ) {
+    return source;
+  } else if (Array.isArray(source) && source.every((i) => Uint8.isUint8(i))) {
+    return source;
   } else {
-    throw new TypeError("a");
+    throw new TypeError(`source-${label}`);
   }
+}
 
-  let bArray: Uint8Array | Uint8ClampedArray | Array<Uint8>;
-  if (b instanceof ArrayBuffer) {
-    bArray = new Uint8Array(b);
-  } else if ((b instanceof Uint8Array) || (b instanceof Uint8ClampedArray)) {
-    bArray = b;
-  } else if (Array.isArray(b) && b.every((bi) => Uint8.isUint8(bi))) {
-    bArray = b;
-  } else {
-    throw new TypeError("b");
-  }
-
-  if (bArray.length > aArray.length) {
-    return false;
-  }
-
+function _startsWith(aArray: _Uint8s, bArray: _Uint8s): boolean {
   for (let i = 0; i < bArray.length; i++) {
     if (aArray[i] !== bArray[i]) {
       return false;
@@ -472,7 +461,33 @@ export function bytesAStartsWithBytesB(a: _Uint8s, b: _Uint8s): boolean {
   return true;
 }
 
-//TODO startsWith
+export function bytesAStartsWithBytesB(
+  a: _Uint8sOrBuffer,
+  b: _Uint8sOrBuffer,
+): boolean {
+  const aArray = _toIterableUint8s(a, "a");
+  const bArray = _toIterableUint8s(b, "b");
+
+  if (bArray.length > aArray.length) {
+    return false;
+  }
+
+  return _startsWith(aArray, bArray);
+}
+
+export function bytesAEqualsBytesB(
+  a: _Uint8sOrBuffer,
+  b: _Uint8sOrBuffer,
+): boolean {
+  const aArray = _toIterableUint8s(a, "a");
+  const bArray = _toIterableUint8s(b, "b");
+
+  if (bArray.length !== aArray.length) {
+    return false;
+  }
+
+  return _startsWith(aArray, bArray);
+}
 
 /** @deprecated */
 export function isArrayOfUint8(value: unknown): value is Array<Uint8> {
