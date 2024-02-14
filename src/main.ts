@@ -77,7 +77,7 @@ export async function fromAsyncUint8Iterable(
   return gb.slice().buffer;
 }
 
-export function toUint8Iterable /* as Array */(
+export function toUint8Iterable(
   bytes: ArrayBuffer,
 ): Iterable<Uint8> {
   if ((bytes instanceof ArrayBuffer) !== true) {
