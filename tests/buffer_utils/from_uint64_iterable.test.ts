@@ -1,11 +1,11 @@
 import { assertStrictEquals, assertThrows } from "../deps.ts";
-import { Uint64 } from "../../deps.ts";
+import { BigUint64 } from "../../deps.ts";
 import { BufferUtils, ByteOrder } from "../../mod.ts";
 
-Deno.test("BufferUtils.fromBigUint64Iterable(Array<Uint64>)", () => {
+Deno.test("BufferUtils.fromBigUint64Iterable(Array<BigUint64>)", () => {
   assertThrows(
     () => {
-      BufferUtils.fromBigUint64Iterable(0 as unknown as Array<Uint64>);
+      BufferUtils.fromBigUint64Iterable(0 as unknown as Array<BigUint64>);
     },
     TypeError,
     "source",
@@ -13,7 +13,7 @@ Deno.test("BufferUtils.fromBigUint64Iterable(Array<Uint64>)", () => {
 
   assertThrows(
     () => {
-      BufferUtils.fromBigUint64Iterable(1 as unknown as Array<Uint64>);
+      BufferUtils.fromBigUint64Iterable(1 as unknown as Array<BigUint64>);
     },
     TypeError,
     "source",
@@ -21,14 +21,14 @@ Deno.test("BufferUtils.fromBigUint64Iterable(Array<Uint64>)", () => {
 
   assertThrows(
     () => {
-      BufferUtils.fromBigUint64Iterable([-1] as unknown as Array<Uint64>);
+      BufferUtils.fromBigUint64Iterable([-1] as unknown as Array<BigUint64>);
     },
     RangeError,
     "source[*]",
   );
   assertThrows(
     () => {
-      BufferUtils.fromBigUint64Iterable(["0"] as unknown as Array<Uint64>);
+      BufferUtils.fromBigUint64Iterable(["0"] as unknown as Array<BigUint64>);
     },
     RangeError,
     "source[*]",
@@ -36,7 +36,7 @@ Deno.test("BufferUtils.fromBigUint64Iterable(Array<Uint64>)", () => {
   assertThrows(
     () => {
       BufferUtils.fromBigUint64Iterable(
-        [0x1_0000_0000_0000_0000n] as unknown as Array<Uint64>,
+        [0x1_0000_0000_0000_0000n] as unknown as Array<BigUint64>,
       );
     },
     RangeError,
@@ -45,7 +45,7 @@ Deno.test("BufferUtils.fromBigUint64Iterable(Array<Uint64>)", () => {
   assertThrows(
     () => {
       BufferUtils.fromBigUint64Iterable(
-        [0n, 0x1_0000_0000_0000_0000n] as unknown as Array<Uint64>,
+        [0n, 0x1_0000_0000_0000_0000n] as unknown as Array<BigUint64>,
       );
     },
     RangeError,
@@ -54,7 +54,7 @@ Deno.test("BufferUtils.fromBigUint64Iterable(Array<Uint64>)", () => {
   assertThrows(
     () => {
       BufferUtils.fromBigUint64Iterable(
-        [0n, -1n] as unknown as Array<Uint64>,
+        [0n, -1n] as unknown as Array<BigUint64>,
       );
     },
     RangeError,
@@ -303,7 +303,7 @@ Deno.test("BufferUtils.fromBigUint64Iterable(BigUint64Array)", () => {
   }
 });
 
-Deno.test("BufferUtils.fromBigUint64Iterable(Generator<Uint64>)", () => {
+Deno.test("BufferUtils.fromBigUint64Iterable(Generator<BigUint64>)", () => {
   const g0 = (function* () {
   })();
   assertStrictEquals(BufferUtils.fromBigUint64Iterable(g0).byteLength, 0);

@@ -1,12 +1,12 @@
 import { assertRejects, assertStrictEquals } from "../deps.ts";
-import { Uint64 } from "../../deps.ts";
+import { BigUint64 } from "../../deps.ts";
 import { BufferUtils } from "../../mod.ts";
 
-Deno.test("BufferUtils.fromAsyncBigUint64Iterable(Array<Uint64>)", () => {
+Deno.test("BufferUtils.fromAsyncBigUint64Iterable(Array<BigUint64>)", () => {
   assertRejects(
     async () => {
       await BufferUtils.fromAsyncBigUint64Iterable(
-        0 as unknown as AsyncIterable<Uint64>,
+        0 as unknown as AsyncIterable<BigUint64>,
       );
     },
     TypeError,
@@ -16,7 +16,7 @@ Deno.test("BufferUtils.fromAsyncBigUint64Iterable(Array<Uint64>)", () => {
   assertRejects(
     async () => {
       await BufferUtils.fromAsyncBigUint64Iterable(
-        1 as unknown as AsyncIterable<Uint64>,
+        1 as unknown as AsyncIterable<BigUint64>,
       );
     },
     TypeError,
@@ -26,7 +26,7 @@ Deno.test("BufferUtils.fromAsyncBigUint64Iterable(Array<Uint64>)", () => {
   assertRejects(
     async () => {
       await BufferUtils.fromAsyncBigUint64Iterable(
-        [-1] as unknown as AsyncIterable<Uint64>,
+        [-1] as unknown as AsyncIterable<BigUint64>,
       );
     },
     TypeError,
@@ -35,7 +35,7 @@ Deno.test("BufferUtils.fromAsyncBigUint64Iterable(Array<Uint64>)", () => {
   assertRejects(
     async () => {
       await BufferUtils.fromAsyncBigUint64Iterable(
-        ["0"] as unknown as AsyncIterable<Uint64>,
+        ["0"] as unknown as AsyncIterable<BigUint64>,
       );
     },
     TypeError,
@@ -44,7 +44,7 @@ Deno.test("BufferUtils.fromAsyncBigUint64Iterable(Array<Uint64>)", () => {
   assertRejects(
     async () => {
       await BufferUtils.fromAsyncBigUint64Iterable(
-        [256] as unknown as AsyncIterable<Uint64>,
+        [256] as unknown as AsyncIterable<BigUint64>,
       );
     },
     TypeError,
@@ -53,7 +53,7 @@ Deno.test("BufferUtils.fromAsyncBigUint64Iterable(Array<Uint64>)", () => {
   assertRejects(
     async () => {
       await BufferUtils.fromAsyncBigUint64Iterable(
-        [0, 256] as unknown as AsyncIterable<Uint64>,
+        [0, 256] as unknown as AsyncIterable<BigUint64>,
       );
     },
     TypeError,
@@ -61,7 +61,7 @@ Deno.test("BufferUtils.fromAsyncBigUint64Iterable(Array<Uint64>)", () => {
   );
 });
 
-Deno.test("BufferUtils.fromAsyncBigUint64Iterable(AsyncGenerator<Uint64>)", async () => {
+Deno.test("BufferUtils.fromAsyncBigUint64Iterable(AsyncGenerator<BigUint64>)", async () => {
   const g0 = (async function* () {
   })();
   assertStrictEquals(
@@ -94,7 +94,7 @@ Deno.test("BufferUtils.fromAsyncBigUint64Iterable(AsyncGenerator<any>)", () => {
   assertRejects(
     async () => {
       await BufferUtils.fromAsyncBigUint64Iterable(
-        g1 as unknown as AsyncGenerator<Uint64>,
+        g1 as unknown as AsyncGenerator<BigUint64>,
       );
     },
     RangeError,

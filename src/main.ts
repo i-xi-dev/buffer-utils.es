@@ -1,9 +1,9 @@
 import {
+  BigUint64,
   ObjectEx,
   SafeInteger,
   Uint16,
   Uint32,
-  Uint64,
   Uint8,
 } from "../deps.ts";
 import { ByteOrder } from "./byte_order.ts";
@@ -365,10 +365,10 @@ export function fromBigUint64Iterable(
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    return _fromUintNIterable<Uint64>(
+    return _fromUintNIterable<BigUint64>(
       source,
       BigUint64Array,
-      Uint64.isUint64 as (i: unknown) => i is Uint64,
+      BigUint64.isBigUint64 as (i: unknown) => i is BigUint64,
       (v, i, e) => {
         v.setBigUint64(0, i, e);
       },
@@ -379,7 +379,7 @@ export function fromBigUint64Iterable(
 
     //XXX ArrayLikeでないとビルドできない、仕様はIterableでは？？
     return BigUint64Array.from(source as unknown as ArrayLike<bigint>, (i) => {
-      if (Uint64.isUint64(i) !== true) {
+      if (BigUint64.isBigUint64(i) !== true) {
         throw new RangeError("source[*]");
       }
       return i;
@@ -388,7 +388,7 @@ export function fromBigUint64Iterable(
 }
 
 export async function fromAsyncBigUint64Iterable(
-  source: AsyncIterable<Uint64>,
+  source: AsyncIterable<BigUint64>,
   byteOrder?: ByteOrder,
 ): Promise<ArrayBuffer> {
   if (ObjectEx.isAsyncIterableObject(source) !== true) {
@@ -399,10 +399,10 @@ export async function fromAsyncBigUint64Iterable(
     Object.values(ByteOrder).includes(byteOrder as ByteOrder) &&
     (byteOrder !== BYTE_ORDER)
   ) {
-    return _fromAsyncUintNIterable<Uint64>(
+    return _fromAsyncUintNIterable<BigUint64>(
       source,
       BigUint64Array,
-      Uint64.isUint64 as (i: unknown) => i is Uint64,
+      BigUint64.isBigUint64 as (i: unknown) => i is BigUint64,
       (v, i, e) => {
         v.setBigUint64(0, i, e);
       },
@@ -416,7 +416,7 @@ export async function fromAsyncBigUint64Iterable(
     const tmpView = new BigUint64Array(1);
 
     for await (const i of source) {
-      if (Uint64.isUint64(i) !== true) {
+      if (BigUint64.isBigUint64(i) !== true) {
         throw new RangeError("source[*]");
       }
       tmpView[0] = i;
@@ -429,8 +429,8 @@ export async function fromAsyncBigUint64Iterable(
 export function toBigUint64Iterable(
   bytes: ArrayBuffer,
   byteOrder?: ByteOrder,
-): Iterable<Uint64> {
-  return _toUintNIterable<Uint64>(bytes, BigUint64Array, (v, o, e) => {
+): Iterable<BigUint64> {
+  return _toUintNIterable<BigUint64>(bytes, BigUint64Array, (v, o, e) => {
     return v.getBigUint64(o, e);
   }, byteOrder);
 }
